@@ -4,6 +4,7 @@
 #include "Utils.h"
 #include "Effect.h"
 #include "Camera.h"
+#include "InputManager.h"
 
 struct SimpleVertex
 {
@@ -123,7 +124,7 @@ void Cube::Draw(const Camera& camera, float totalPassedTime)
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 
-	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateFromYawPitchRoll(totalPassedTime, 0.0f, 0.0f) * camera.GetViewProjectionMatrix();
+	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateFromYawPitchRoll(InputManager::Get().GetMouseWheel() * 0.0001f, 0.0f, 0.0f) * camera.GetViewProjectionMatrix();
 	memcpy(resource.pData, &worldViewProjection, sizeof(SimpleMath::Matrix));
 	immediateContext->Unmap(_constantBuffer, 0);
 	immediateContext->VSSetConstantBuffers(0, 1, &_constantBuffer.p);
