@@ -5,7 +5,8 @@
 #include "Cube.h"
 #include "Timer.h"
 #include "Utils.h"
-#include "Camera.h"
+#include "FreeCamera.h"
+#include "InputManager.h"
 
 Demo::Demo() :
 	_window(new Window()),
@@ -28,7 +29,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 		return false;
 	DeviceManager::Get().CreateSwapChainAndBackBuffer(_window->GetHandle(), DeviceManager::Get().GetAvailableMultisamplingSettings().back());
 	
-	_camera.reset(new Camera(Utils::DegToRad(80.0f), DeviceManager::Get().GetBackBufferAspectRatio()));
+	_camera.reset(new FreeCamera(Utils::DegToRad(80.0f), DeviceManager::Get().GetBackBufferAspectRatio()));
 
 	// 
 	_cube.reset(new Cube());
@@ -60,6 +61,7 @@ void Demo::RunMainLoop()
 
 void Demo::Update(float timeSinceLastUpdate)
 {
+	_camera->Update(timeSinceLastUpdate);
 }
 
 void Demo::Draw(float timeSinceLastUpdate)

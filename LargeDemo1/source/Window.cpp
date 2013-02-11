@@ -77,6 +77,7 @@ bool Window::InitWindow(HINSTANCE hInstance, const std::wstring& caption, unsign
 
 bool Window::MessagePump()
 {
+	InputManager::Get().UpdatePressedReleaseTables();
 	MSG msg = {0};
 	while(PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 	{

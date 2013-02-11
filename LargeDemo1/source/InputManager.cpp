@@ -40,6 +40,10 @@ void InputManager::UpdatePressedReleaseTables()
 		mouseButtonPressed[i] = false;
 	for(int i=0; i<MouseButton::NUM_BUTTONS; ++i)
 		mouseButtonReleased[i] = false;
+
+	mouseXDelta = 0;
+	mouseYDelta = 0;
+	mouseWheelDelta = 0;
 }
 
 #define GETX(l) (int(l & 0xFFFF))

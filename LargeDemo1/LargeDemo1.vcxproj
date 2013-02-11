@@ -161,6 +161,7 @@
     <ClInclude Include="source\Demo.h" />
     <ClInclude Include="source\DeviceManager.h" />
     <ClInclude Include="source\Effect.h" />
+    <ClInclude Include="source\FreeCamera.h" />
     <ClInclude Include="source\InputManager.h" />
     <ClInclude Include="source\Resource.h" />
     <ClInclude Include="source\Shader.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="source\Demo.cpp" />
     <ClCompile Include="source\DeviceManager.cpp" />
     <ClCompile Include="source\Effect.cpp" />
+    <ClCompile Include="source\FreeCamera.cpp" />
     <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\Shader.cpp" />
