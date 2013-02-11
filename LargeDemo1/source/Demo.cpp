@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "Demo.h"
 #include "Window.h"
-#include "Direct3D11Device.h"
+#include "DeviceManager.h"
+#include "Cube.h"
 
 Demo::Demo() :
 	_window(new Window())
@@ -17,10 +18,14 @@ bool Demo::Initialize(HINSTANCE hInstance)
 	if(!_window->InitWindow(hInstance, L"LargeDemo1", 1600, 900))
 		return false;
 
+	// device
 	DXGI_SAMPLE_DESC multiSamplingSettings;
 	multiSamplingSettings.Count = 1;
 	multiSamplingSettings.Quality = 0;
-	Direct3D11Device::Get().InitDevice(_window->GetHandle(), multiSamplingSettings);
+	DeviceManager::Get().InitDevice(_window->GetHandle(), multiSamplingSettings);
+
+	// 
+	_cube.reset(new Cube());
 
 	return true;
 }
@@ -44,6 +49,11 @@ void Demo::Update(float timeSinceLastUpdate)
 
 void Demo::Draw(float timeSinceLastUpdate)
 {
-	Direct3D11Device::Get().ClearBackAndDepthBuffer();
-	Direct3D11Device::Get().GetSwapChain()->Present(0, 0);
+	DeviceManager::Get().ClearBackAndDepthBuffer();
+
+
+	_cube->Draw();
+
+
+	DeviceManager::Get().GetSwapChain()->Present(0, 0);
 }

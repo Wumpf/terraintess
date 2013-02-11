@@ -16,10 +16,17 @@
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
+#include <math.h>
 
 // C++ RunTime Header Files
 #include <memory>
 #include <string>
+#include <array>
+#include <vector>
+#include <set>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
 
 // directx
 #include <d3d11_1.h>

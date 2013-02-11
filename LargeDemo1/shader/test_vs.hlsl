@@ -1,6 +1,8 @@
+#include "globalconstantbuffers.hlsl"
+
 struct VS_INPUT
 {
-    float4 Pos : POSITION;
+    float3 Pos : POSITION;
     float2 Tex : TEXCOORD0;
 };
 
@@ -10,17 +12,11 @@ struct PS_INPUT
     float2 Tex : TEXCOORD0;
 };
 
-cbuffer cbChangesEveryFrame : register(b0)
-{
-    matrix WorldViewProjection;
-};
-
-
 PS_INPUT main( VS_INPUT input )
 {
     PS_INPUT output = (PS_INPUT)0;
-    output.Pos = mul(WorldViewProjection, input.Pos);
+    output.Pos = mul(WorldViewProjection, float4(input.Pos, 1.0f));
     output.Tex = input.Tex;
-    
+   
     return output;
 }

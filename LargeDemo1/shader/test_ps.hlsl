@@ -1,7 +1,6 @@
-Texture2D txDiffuse : register( t0 );
-SamplerState samLinear : register( s0 );
+#include "test_vs.hlsl"
 
-float4 main() : SV_TARGET
+float4 main(PS_INPUT input) : SV_TARGET
 {
-	return float4(1.0f, 0.0f, 1.0f, 1.0f);
+	return float4(input.Tex, 0.0f, 1.0f);
 }

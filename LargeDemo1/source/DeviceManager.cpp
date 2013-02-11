@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include "Direct3D11Device.h"
+#include "DeviceManager.h"
 #include "Utils.h"
 
 
-Direct3D11Device::Direct3D11Device() :
+DeviceManager::DeviceManager() :
 	_initialized(false)
 {
 }
 
 
-Direct3D11Device::~Direct3D11Device(void)
+DeviceManager::~DeviceManager(void)
 {
 	CleanupDevice();
 }
 
 
-bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& multisamplingSettings, D3D11_CREATE_DEVICE_FLAG deviceFlags)
+bool DeviceManager::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& multisamplingSettings, D3D11_CREATE_DEVICE_FLAG deviceFlags)
 {
 	if(_initialized)
 		return true;
@@ -26,8 +26,8 @@ bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& mul
 	// width from window
     RECT rc;
     GetClientRect(windowHandle, &rc);
-    UINT width = rc.right - rc.left;
-    UINT height = rc.bottom - rc.top;
+    _backBufferWidth = rc.right - rc.left;
+    _backBufferHeight = rc.bottom - rc.top;
 
 
 	// device creation flags
@@ -59,8 +59,8 @@ bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& mul
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory( &sd, sizeof( sd ) );
     sd.BufferCount = 1;
-    sd.BufferDesc.Width = width;
-    sd.BufferDesc.Height = height;
+    sd.BufferDesc.Width = _backBufferWidth;
+    sd.BufferDesc.Height = _backBufferHeight;
     sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;	
     sd.BufferDesc.RefreshRate.Numerator = 60;
     sd.BufferDesc.RefreshRate.Denominator = 1;
@@ -92,8 +92,8 @@ bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& mul
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC descDepth;
     ZeroMemory( &descDepth, sizeof(descDepth) );
-    descDepth.Width = width;
-    descDepth.Height = height;
+    descDepth.Width = _backBufferWidth;
+    descDepth.Height = _backBufferHeight;
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
     descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -120,8 +120,8 @@ bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& mul
 	_immediateContext->OMSetRenderTargets( 1, &_backBufferView, _depthBufferView);
 
     // Setup the viewport
-    _backBufferViewport.Width = (FLOAT)width;
-    _backBufferViewport.Height = (FLOAT)height;
+    _backBufferViewport.Width = (FLOAT)_backBufferWidth;
+    _backBufferViewport.Height = (FLOAT)_backBufferHeight;
     _backBufferViewport.MinDepth = 0.0f;
     _backBufferViewport.MaxDepth = 1.0f;
     _backBufferViewport.TopLeftX = 0;
@@ -336,13 +336,13 @@ bool Direct3D11Device::InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& mul
 	return true;
 }
 
-void Direct3D11Device::ClearBackAndDepthBuffer(const DirectX::SimpleMath::Color& color)
+void DeviceManager::ClearBackAndDepthBuffer(const SimpleMath::Color& color)
 {
 	_immediateContext->ClearRenderTargetView(_backBufferView, color);
 	_immediateContext->ClearDepthStencilView(_depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void Direct3D11Device::CleanupDevice()
+void DeviceManager::CleanupDevice()
 {
 	if(!_initialized)
 		return;

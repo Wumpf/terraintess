@@ -16,4 +16,5 @@ public:
 
 private:
 	std::unique_ptr<class Window> _window;
+	std::unique_ptr<class Cube> _cube;
 };

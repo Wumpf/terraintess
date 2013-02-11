@@ -1,24 +1,27 @@
 #pragma once
 
 
-class Direct3D11Device
+class DeviceManager
 {
 public:
-	static Direct3D11Device& Get()
-	{ static Direct3D11Device inst; return inst; }
+	static DeviceManager& Get()
+	{ static DeviceManager inst; return inst; }
 
 	bool InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& multisamplingSettings, D3D11_CREATE_DEVICE_FLAG deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED);
 	void CleanupDevice();
 
-	void ClearBackAndDepthBuffer(const DirectX::SimpleMath::Color& color = DirectX::SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
+	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
 
 	IDXGISwapChain* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
 	ID3D11DeviceContext* GetImmediateContext() { return _immediateContext; }
 
+	unsigned int GetBackBufferWidth() { return _backBufferWidth; }
+	unsigned int GetBackBufferHeight() { return _backBufferHeight; }
+
 private:
-	Direct3D11Device();
-	~Direct3D11Device();
+	DeviceManager();
+	~DeviceManager();
 
 	bool _initialized;
 
@@ -29,7 +32,7 @@ private:
 	D3D_DRIVER_TYPE _driverType;
 	D3D_FEATURE_LEVEL _featureLevel;
 
-
+	unsigned int _backBufferWidth, _backBufferHeight;
 	ID3D11Texture2D* _backBuffer;
 	ID3D11RenderTargetView* _backBufferView;
 

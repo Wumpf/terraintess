@@ -24,9 +24,7 @@
 #include "DirectXPackedVector.h"
 #include "DirectXCollision.h"
 
-
-namespace DirectX
-{
+using namespace DirectX;
 
 namespace SimpleMath
 {
@@ -726,24 +724,24 @@ struct BoundingBox : public DirectX::BoundingBox
 
 }; // namespace SimpleMath
 
-}; // namespace DirectX
+//}; // namespace DirectX
 
 //------------------------------------------------------------------------------
 // Support for SimpleMath and Standard C++ Library containers
 namespace std
 {
 
-    template<> struct less<DirectX::SimpleMath::Vector2>
+    template<> struct less<SimpleMath::Vector2>
     {
-        bool operator()(const DirectX::SimpleMath::Vector2& V1, const DirectX::SimpleMath::Vector2& V2) const
+        bool operator()(const SimpleMath::Vector2& V1, const SimpleMath::Vector2& V2) const
         {
             return ( (V1.x < V2.x) || ((V1.x == V2.x) && (V1.y < V2.y)) );
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Vector3>
+    template<> struct less<SimpleMath::Vector3>
     {
-        bool operator()(const DirectX::SimpleMath::Vector3& V1, const DirectX::SimpleMath::Vector3& V2) const
+        bool operator()(const SimpleMath::Vector3& V1, const SimpleMath::Vector3& V2) const
         {
             return ( (V1.x < V2.x)
                      || ((V1.x == V2.x) && (V1.y < V2.y))
@@ -751,9 +749,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Vector4>
+    template<> struct less<SimpleMath::Vector4>
     {
-        bool operator()(const DirectX::SimpleMath::Vector4& V1, const DirectX::SimpleMath::Vector4& V2) const
+        bool operator()(const SimpleMath::Vector4& V1, const SimpleMath::Vector4& V2) const
         {
             return ( (V1.x < V2.x)
                      || ((V1.x == V2.x) && (V1.y < V2.y))
@@ -762,9 +760,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Matrix>
+    template<> struct less<SimpleMath::Matrix>
     {
-        bool operator()(const DirectX::SimpleMath::Matrix& M1, const DirectX::SimpleMath::Matrix& M2) const
+        bool operator()(const SimpleMath::Matrix& M1, const SimpleMath::Matrix& M2) const
         {
             if ( (M1._11 < M2._11)
                  || ((M1._11 == M2._11) && (M1._12 < M2._12))
@@ -791,9 +789,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Plane>
+    template<> struct less<SimpleMath::Plane>
     {
-        bool operator()(const DirectX::SimpleMath::Plane& P1, const DirectX::SimpleMath::Plane& P2) const
+        bool operator()(const SimpleMath::Plane& P1, const SimpleMath::Plane& P2) const
         {
             return ( (P1.x < P2.x)
                      || ((P1.x == P2.x) && (P1.y < P2.y))
@@ -802,9 +800,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Quaternion>
+    template<> struct less<SimpleMath::Quaternion>
     {
-        bool operator()(const DirectX::SimpleMath::Quaternion& Q1, const DirectX::SimpleMath::Quaternion& Q2) const
+        bool operator()(const SimpleMath::Quaternion& Q1, const SimpleMath::Quaternion& Q2) const
         {
             return ( (Q1.x < Q2.x)
                      || ((Q1.x == Q2.x) && (Q1.y < Q2.y))
@@ -813,9 +811,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Color>
+    template<> struct less<SimpleMath::Color>
     {
-        bool operator()(const DirectX::SimpleMath::Color& C1, const DirectX::SimpleMath::Color& C2) const
+        bool operator()(const SimpleMath::Color& C1, const SimpleMath::Color& C2) const
         {
             return ( (C1.x < C2.x)
                      || ((C1.x == C2.x) && (C1.y < C2.y))
@@ -824,9 +822,9 @@ namespace std
         }
     };
 
-    template<> struct less<DirectX::SimpleMath::Ray>
+    template<> struct less<SimpleMath::Ray>
     {
-        bool operator()(const DirectX::SimpleMath::Ray& R1, const DirectX::SimpleMath::Ray& R2) const
+        bool operator()(const SimpleMath::Ray& R1, const SimpleMath::Ray& R2) const
         {
             if ( (R1.position.x < R2.position.x)
                  || ((R1.position.x == R2.position.x) && (R1.position.y < R2.position.y))
