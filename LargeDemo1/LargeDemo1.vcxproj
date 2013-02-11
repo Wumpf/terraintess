@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -155,6 +155,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ScreenConstants.h" />
+    <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Cube.h" />
     <ClInclude Include="source\Demo.h" />
     <ClInclude Include="source\DeviceManager.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="source\Shader.h" />
     <ClInclude Include="source\SimpleMath.h" />
     <ClInclude Include="source\stdafx.h" />
+    <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Utils.h" />
     <ClInclude Include="source\Window.h" />
   </ItemGroup>
@@ -174,6 +177,8 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ScreenConstants.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Cube.cpp" />
     <ClCompile Include="source\Demo.cpp" />
     <ClCompile Include="source\DeviceManager.cpp" />
@@ -186,6 +191,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\Utils.cpp" />
     <ClCompile Include="source\Window.cpp" />
   </ItemGroup>

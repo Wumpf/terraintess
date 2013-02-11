@@ -3,9 +3,14 @@
 #include "Window.h"
 #include "DeviceManager.h"
 #include "Cube.h"
+#include "Timer.h"
+#include "Utils.h"
+#include "Camera.h"
 
 Demo::Demo() :
-	_window(new Window())
+	_window(new Window()),
+	_passedTimeSinceStart(0.0f),
+	_frameNumber(0)
 {
 }
 
@@ -19,10 +24,11 @@ bool Demo::Initialize(HINSTANCE hInstance)
 		return false;
 
 	// device
-	DXGI_SAMPLE_DESC multiSamplingSettings;
-	multiSamplingSettings.Count = 1;
-	multiSamplingSettings.Quality = 0;
-	DeviceManager::Get().InitDevice(_window->GetHandle(), multiSamplingSettings);
+	if(!DeviceManager::Get().InitDevice())
+		return false;
+	DeviceManager::Get().CreateSwapChainAndBackBuffer(_window->GetHandle(), DeviceManager::Get().GetAvailableMultisamplingSettings().back());
+	
+	_camera.reset(new Camera(Utils::DegToRad(80.0f), DeviceManager::Get().GetBackBufferAspectRatio()));
 
 	// 
 	_cube.reset(new Cube());
@@ -32,13 +38,22 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 void Demo::RunMainLoop()
 {
+	Timer timer;
+	float lastFrameLength = 0.0f;
+
 	while(true)
 	{
+		lastFrameLength = timer.GetTimeSeconds();
+		_passedTimeSinceStart += lastFrameLength;
+		timer.Reset();
+
+
 		if(!_window->MessagePump())
 			break;
 
-		Update(0.0f);
-		Draw(0.0f);
+		Update(lastFrameLength);
+		++_frameNumber;
+		Draw(lastFrameLength);
 	}
 }
 
@@ -52,7 +67,7 @@ void Demo::Draw(float timeSinceLastUpdate)
 	DeviceManager::Get().ClearBackAndDepthBuffer();
 
 
-	_cube->Draw();
+	_cube->Draw(*_camera, _passedTimeSinceStart);
 
 
 	DeviceManager::Get().GetSwapChain()->Present(0, 0);

@@ -1,3 +1,5 @@
+#include "Camera.h"
+
 class Demo
 {
 public:
@@ -15,6 +17,12 @@ public:
 	void Update(float timeSinceLastUpdate);
 
 private:
+	float _passedTimeSinceStart;
+	unsigned int _frameNumber;
+
 	std::unique_ptr<class Window> _window;
+
 	std::unique_ptr<class Cube> _cube;
+
+	std::unique_ptr<Camera> _camera;
 };

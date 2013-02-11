@@ -7,17 +7,22 @@ public:
 	static DeviceManager& Get()
 	{ static DeviceManager inst; return inst; }
 
-	bool InitDevice(HWND windowHandle, const DXGI_SAMPLE_DESC& multisamplingSettings, D3D11_CREATE_DEVICE_FLAG deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED);
+	/// checks which sampling settings are available for a given format
+	std::vector<DXGI_SAMPLE_DESC> GetAvailableMultisamplingSettings(DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM);
+
+	bool InitDevice(D3D11_CREATE_DEVICE_FLAG deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED);
+	bool CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_SAMPLE_DESC& samplingSettings);
 	void CleanupDevice();
 
 	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
 
-	IDXGISwapChain* GetSwapChain()			{ return _swapChain; }
+	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
 	ID3D11DeviceContext* GetImmediateContext() { return _immediateContext; }
 
-	unsigned int GetBackBufferWidth() { return _backBufferWidth; }
-	unsigned int GetBackBufferHeight() { return _backBufferHeight; }
+	unsigned int GetBackBufferWidth() const		{ return _backBufferWidth; }
+	unsigned int GetBackBufferHeight() const	{ return _backBufferHeight; }
+	float GetBackBufferAspectRatio() const		{ return static_cast<float>(_backBufferWidth) / _backBufferHeight; }
 
 private:
 	DeviceManager();
@@ -25,12 +30,13 @@ private:
 
 	bool _initialized;
 
-	IDXGISwapChain* _swapChain;
+	IDXGISwapChain1* _swapChain;
 	ID3D11Device* _device;
 	ID3D11DeviceContext* _immediateContext;
 
 	D3D_DRIVER_TYPE _driverType;
 	D3D_FEATURE_LEVEL _featureLevel;
+
 
 	unsigned int _backBufferWidth, _backBufferHeight;
 	ID3D11Texture2D* _backBuffer;
@@ -38,6 +44,8 @@ private:
 
 	ID3D11Texture2D* _depthBuffer;
 	ID3D11DepthStencilView* _depthBufferView;
+
+	DXGI_SAMPLE_DESC _samplingSettings;
 
 	D3D11_VIEWPORT _backBufferViewport;
 };
