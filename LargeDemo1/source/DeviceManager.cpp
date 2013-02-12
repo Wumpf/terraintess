@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DeviceManager.h"
 #include "Utils.h"
+#include "RasterizerState.h"
 
 
 DeviceManager::DeviceManager() :
@@ -177,6 +178,13 @@ void DeviceManager::ClearBackAndDepthBuffer(const SimpleMath::Color& color)
 {
 	_immediateContext->ClearRenderTargetView(_backBufferView, color);
 	_immediateContext->ClearDepthStencilView(_depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void DeviceManager::SetRasterizerState(RasterizerState& state)
+{
+	if(state._stateObject == nullptr)
+		_device->CreateRasterizerState(&state._desc, &state._stateObject.p);
+	_immediateContext->RSSetState(state._stateObject.p);
 }
 
 void DeviceManager::CleanupDevice()

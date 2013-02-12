@@ -1,5 +1,7 @@
 #pragma once
 
+#undef DOMAIN	// *grml*
+
 class Shader
 {
 public:
@@ -7,9 +9,9 @@ public:
 	{
 		VERTEX,
 		PIXEL,
-		//HULL,
-		//DOMAIN,
-		//GEOMETRY
+		HULL,
+		DOMAIN,
+		GEOMETRY
 	};
 
 	/// sets shader to the device
@@ -25,7 +27,7 @@ public:
 protected:
 	Shader(ID3D11DeviceChild* shader, Type type) : _shader(shader), _type(type) {}
 
-	static std::unique_ptr<char[]> LoadByteCodeFromFile(const std::string& filname, size_t& outFileLength);
+	static std::unique_ptr<char[]> LoadByteCodeFromFile(const std::string& filname, int& outFileLength);
 	CComPtr<ID3D11DeviceChild> _shader;
 
 private:
@@ -61,4 +63,46 @@ public:
 	~PixelShader() {}
 private:
 	PixelShader(ID3D11DeviceChild* shader) : Shader(shader, Type::PIXEL) {}
+};
+
+class HullShader : public Shader
+{
+public:
+	/// create from compiled shader file
+	static std::shared_ptr<HullShader> FromFile(const std::string& filename);
+
+	/// \copydoc Shader::Activate
+	void Activate();
+
+	~HullShader() {}
+private:
+	HullShader(ID3D11DeviceChild* shader) : Shader(shader, Type::HULL) {}
+};
+
+class DomainShader : public Shader
+{
+public:
+	/// create from compiled shader file
+	static std::shared_ptr<DomainShader> FromFile(const std::string& filename);
+
+	/// \copydoc Shader::Activate
+	void Activate();
+
+	~DomainShader() {}
+private:
+	DomainShader(ID3D11DeviceChild* shader) : Shader(shader, Type::DOMAIN) {}
+};
+
+class GeometryShader : public Shader
+{
+public:
+	/// create from compiled shader file
+	static std::shared_ptr<GeometryShader> FromFile(const std::string& filename);
+
+	/// \copydoc Shader::Activate
+	void Activate();
+
+	~GeometryShader() {}
+private:
+	GeometryShader(ID3D11DeviceChild* shader) : Shader(shader, Type::GEOMETRY) {}
 };

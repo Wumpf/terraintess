@@ -5,26 +5,14 @@
 #include "Effect.h"
 #include "Camera.h"
 #include "InputManager.h"
-
-struct SimpleVertex
-{
-	SimpleMath::Vector3 pos;
-    SimpleMath::Vector2 tex;
-
-	static const D3D11_INPUT_ELEMENT_DESC desc[];
-};
-const D3D11_INPUT_ELEMENT_DESC SimpleVertex::desc[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+#include "VertexFormats.h"
 
 
 Cube::Cube() :
-	_effect(new Effect("shader/test_vs.cso", SimpleVertex::desc, sizeof(SimpleVertex::desc) / sizeof(SimpleVertex::desc[0]), "shader/test_ps.cso"))
+	_effect(new Effect("shader/test_vs.cso", Vertices::PositionTexture::desc, Vertices::PositionTexture::numDescElements, "shader/test_ps.cso"))
 {
     // Create vertex buffer
-    SimpleVertex vertices[] =
+    Vertices::PositionTexture vertices[] =
     {
         { SimpleMath::Vector3( -1.0f, 1.0f, -1.0f ), SimpleMath::Vector2( 0.0f, 0.0f ) },
         { SimpleMath::Vector3( 1.0f, 1.0f, -1.0f ), SimpleMath::Vector2( 1.0f, 0.0f ) },
@@ -62,7 +50,7 @@ Cube::Cube() :
     D3D11_BUFFER_DESC bd;
     ZeroMemory( &bd, sizeof(bd) );
 	bd.Usage = D3D11_USAGE_DEFAULT;
-    bd.ByteWidth = sizeof(SimpleVertex) * 24;
+    bd.ByteWidth = sizeof(Vertices::PositionTexture) * 24;
     bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     D3D11_SUBRESOURCE_DATA InitData;
     ZeroMemory( &InitData, sizeof(InitData) );
@@ -114,8 +102,7 @@ void Cube::Draw(const Camera& camera, float totalPassedTime)
 {
 	auto immediateContext = DeviceManager::Get().GetImmediateContext();
 
-
-    UINT stride = sizeof(SimpleVertex);
+	UINT stride = sizeof(Vertices::PositionTexture);
     UINT offset = 0;
 	immediateContext->IASetVertexBuffers(0, 1, &_vertexBuffer.p, &stride, &offset);
 	immediateContext->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);

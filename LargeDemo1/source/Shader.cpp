@@ -6,14 +6,14 @@
 
 
 
-std::unique_ptr<char[]> Shader::LoadByteCodeFromFile(const std::string& filename, size_t& outFileLength)
+std::unique_ptr<char[]> Shader::LoadByteCodeFromFile(const std::string& filename, int& outFileLength)
 {
 	std::ifstream shaderFile(filename, std::ios::binary | std::ios::ate);
 	assert(!shaderFile.bad());
 	if(shaderFile.bad())
 		return nullptr;
 
-	outFileLength = shaderFile.tellg();
+	outFileLength = static_cast<int>(shaderFile.tellg());
 	assert(outFileLength > 0);
 	if(outFileLength <= 0)
 		return nullptr;
@@ -33,14 +33,9 @@ void VertexShader::Activate()
 	immediateContext->IASetInputLayout(_inputLayout);
 }
 
-void PixelShader::Activate()
-{
-	DeviceManager::Get().GetImmediateContext()->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(_shader.p), nullptr, 0);
-}
-
 std::shared_ptr<VertexShader> VertexShader::FromFile(const std::string& filename, const D3D11_INPUT_ELEMENT_DESC* inputLayoutDesc, unsigned int numInputLayoutElements)
 {
-	size_t fileLength; 
+	int fileLength; 
 	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
 	if(!byteCode.get())
 		return nullptr;
@@ -53,9 +48,15 @@ std::shared_ptr<VertexShader> VertexShader::FromFile(const std::string& filename
 	return std::shared_ptr<VertexShader>(new VertexShader(shader, inputLayout));
 }
 
+
+void PixelShader::Activate()
+{
+	DeviceManager::Get().GetImmediateContext()->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(_shader.p), nullptr, 0);
+}
+
 std::shared_ptr<PixelShader> PixelShader::FromFile(const std::string& filename)
 {
-	size_t fileLength; 
+	int fileLength; 
 	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
 	if(!byteCode.get())
 		return nullptr;
@@ -64,4 +65,58 @@ std::shared_ptr<PixelShader> PixelShader::FromFile(const std::string& filename)
 	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreatePixelShader(byteCode.get(), fileLength, nullptr, &shader)));
 
 	return std::shared_ptr<PixelShader>(new PixelShader(shader));
+}
+
+void HullShader::Activate()
+{
+	DeviceManager::Get().GetImmediateContext()->HSSetShader(reinterpret_cast<ID3D11HullShader*>(_shader.p), nullptr, 0);
+}
+
+std::shared_ptr<HullShader> HullShader::FromFile(const std::string& filename)
+{
+	int fileLength; 
+	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
+	if(!byteCode.get())
+		return nullptr;
+
+	ID3D11HullShader* shader;
+	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateHullShader(byteCode.get(), fileLength, nullptr, &shader)));
+
+	return std::shared_ptr<HullShader>(new HullShader(shader));
+}
+
+void DomainShader::Activate()
+{
+	DeviceManager::Get().GetImmediateContext()->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(_shader.p), nullptr, 0);
+}
+
+std::shared_ptr<DomainShader> DomainShader::FromFile(const std::string& filename)
+{
+	int fileLength; 
+	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
+	if(!byteCode.get())
+		return nullptr;
+
+	ID3D11DomainShader* shader;
+	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateDomainShader(byteCode.get(), fileLength, nullptr, &shader)));
+
+	return std::shared_ptr<DomainShader>(new DomainShader(shader));
+}
+
+void GeometryShader::Activate()
+{
+	DeviceManager::Get().GetImmediateContext()->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(_shader.p), nullptr, 0);
+}
+
+std::shared_ptr<GeometryShader> GeometryShader::FromFile(const std::string& filename)
+{
+	int fileLength; 
+	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
+	if(!byteCode.get())
+		return nullptr;
+
+	ID3D11GeometryShader* shader;
+	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateGeometryShader(byteCode.get(), fileLength, nullptr, &shader)));
+
+	return std::shared_ptr<GeometryShader>(new GeometryShader(shader));
 }

@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,55 +8,74 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{26561412-894c-4697-ac4b-66d83694ba68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Code Files\objects">
+      <UniqueIdentifier>{ee523505-e023-476d-adc8-d512047632ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Files\rendering core">
+      <UniqueIdentifier>{ddab7d3f-9c5c-4c02-981a-a0a7fd6329fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Files\helper">
+      <UniqueIdentifier>{ed002f44-9c11-40cd-9b7e-1fac4525e93b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\Demo.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code Files</Filter>
     </ClInclude>
     <ClInclude Include="source\stdafx.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code Files</Filter>
     </ClInclude>
     <ClInclude Include="source\Resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\SimpleMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Cube.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\DeviceManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Effect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\InputManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code Files</Filter>
     </ClInclude>
     <ClInclude Include="source\FreeCamera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Code Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SimpleMath.h">
+      <Filter>Code Files\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="source\InputManager.h">
+      <Filter>Code Files\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Utils.h">
+      <Filter>Code Files\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Timer.h">
+      <Filter>Code Files\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Cube.h">
+      <Filter>Code Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Terrain.h">
+      <Filter>Code Files\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Window.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\VertexFormats.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Shader.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RasterizerState.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Effect.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\DeviceManager.h">
+      <Filter>Code Files\rendering core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -81,53 +92,54 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\Demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Cube.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\DeviceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Effect.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\Camera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code Files</Filter>
     </ClCompile>
-    <ClCompile Include="ScreenConstants.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\InputManager.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="source\Demo.cpp">
+      <Filter>Code Files</Filter>
     </ClCompile>
     <ClCompile Include="source\FreeCamera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Code Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="source\SimpleMath.inl">
-      <Filter>Header Files</Filter>
-    </None>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Code Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stdafx.cpp">
+      <Filter>Code Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Utils.cpp">
+      <Filter>Code Files\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Timer.cpp">
+      <Filter>Code Files\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="source\InputManager.cpp">
+      <Filter>Code Files\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Cube.cpp">
+      <Filter>Code Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Terrain.cpp">
+      <Filter>Code Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Window.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\VertexFormats.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Shader.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RasterizerState.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Effect.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\DeviceManager.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\test_vs.hlsl">
@@ -139,5 +151,22 @@
     <FxCompile Include="shader\globalconstantbuffers.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\terrain_ds.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_hs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="source\SimpleMath.inl">
+      <Filter>Code Files\helper</Filter>
+    </None>
   </ItemGroup>
 </Project>

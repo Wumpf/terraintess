@@ -3,6 +3,7 @@
 #include "Window.h"
 #include "DeviceManager.h"
 #include "Cube.h"
+#include "Terrain.h"
 #include "Timer.h"
 #include "Utils.h"
 #include "FreeCamera.h"
@@ -33,6 +34,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// 
 	_cube.reset(new Cube());
+	_terrain.reset(new Terrain());
 
 	return true;
 }
@@ -70,6 +72,7 @@ void Demo::Draw(float timeSinceLastUpdate)
 
 
 	_cube->Draw(*_camera, _passedTimeSinceStart);
+	_terrain->Draw(*_camera);
 
 
 	DeviceManager::Get().GetSwapChain()->Present(0, 0);

@@ -16,6 +16,10 @@ public:
 
 	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
 
+	// easy states
+	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
+
+	// getter
 	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
 	ID3D11DeviceContext* GetImmediateContext() { return _immediateContext; }

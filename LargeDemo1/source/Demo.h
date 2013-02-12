@@ -23,6 +23,7 @@ private:
 	std::unique_ptr<class Window> _window;
 
 	std::unique_ptr<class Cube> _cube;
+	std::unique_ptr<class Terrain> _terrain;
 
 	std::unique_ptr<Camera> _camera;
 };
