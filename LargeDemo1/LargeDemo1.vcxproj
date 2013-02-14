@@ -157,17 +157,21 @@
   <ItemGroup>
     <ClInclude Include="source\Camera.h" />
     <ClInclude Include="source\Cube.h" />
+    <ClInclude Include="source\D3D11Helper.h" />
     <ClInclude Include="source\Demo.h" />
     <ClInclude Include="source\DeviceManager.h" />
     <ClInclude Include="source\Effect.h" />
     <ClInclude Include="source\FreeCamera.h" />
     <ClInclude Include="source\InputManager.h" />
+    <ClInclude Include="source\NoiseGenerator.h" />
     <ClInclude Include="source\RasterizerState.h" />
     <ClInclude Include="source\Resource.h" />
+    <ClInclude Include="source\SamplerState.h" />
     <ClInclude Include="source\Shader.h" />
     <ClInclude Include="source\SimpleMath.h" />
     <ClInclude Include="source\stdafx.h" />
     <ClInclude Include="source\Terrain.h" />
+    <ClInclude Include="source\Texture.h" />
     <ClInclude Include="source\Timer.h" />
     <ClInclude Include="source\Utils.h" />
     <ClInclude Include="source\VertexFormats.h" />
@@ -183,13 +187,16 @@
   <ItemGroup>
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\Cube.cpp" />
+    <ClCompile Include="source\D3D11Helper.cpp" />
     <ClCompile Include="source\Demo.cpp" />
     <ClCompile Include="source\DeviceManager.cpp" />
     <ClCompile Include="source\Effect.cpp" />
     <ClCompile Include="source\FreeCamera.cpp" />
     <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\NoiseGenerator.cpp" />
     <ClCompile Include="source\RasterizerState.cpp" />
+    <ClCompile Include="source\SamplerState.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -198,6 +205,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\Terrain.cpp" />
+    <ClCompile Include="source\Texture.cpp" />
     <ClCompile Include="source\Timer.cpp" />
     <ClCompile Include="source\Utils.cpp" />
     <ClCompile Include="source\VertexFormats.cpp" />

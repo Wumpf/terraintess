@@ -4,7 +4,7 @@
 struct DS_OUTPUT
 {
 	float4 Pos : SV_POSITION;
-	float2 Tex : TEXCOORD;
+	float3 WorldPos : NORMAL;
 };
 
 [domain("quad")]
@@ -12,12 +12,13 @@ DS_OUTPUT main(HS_CONSTANT_DATA_OUTPUT input, float2 domain : SV_DomainLocation,
 {
 	DS_OUTPUT output;
 
-	output.Pos = float4(lerp(lerp(patch[0].Pos, patch[1].Pos, domain.x),
-							 lerp(patch[3].Pos, patch[2].Pos, domain.x), domain.y), 1);
-	output.Tex = lerp(lerp(patch[0].Tex, patch[1].Tex, domain.x),
-					  lerp(patch[3].Tex, patch[2].Tex, domain.x), domain.y);
+	output.WorldPos.xz = lerp(lerp(patch[0].Pos2D, patch[1].Pos2D, domain.x),
+						 lerp(patch[3].Pos2D, patch[2].Pos2D, domain.x), domain.y);
+	output.WorldPos.y = sin(output.WorldPos.x*20)*10;
 
-	output.Pos = mul(WorldViewProjection, output.Pos);
+	//HeightmapTexture.
+	
+	output.Pos = mul(WorldViewProjection, float4(output.WorldPos, 1.0f));
 
 	return output;
 }

@@ -21,6 +21,9 @@
     <Filter Include="Code Files\helper">
       <UniqueIdentifier>{ed002f44-9c11-40cd-9b7e-1fac4525e93b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Code Files\rendering core\state objects">
+      <UniqueIdentifier>{4879d544-7f0e-474c-9305-db7805497521}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -68,14 +71,26 @@
     <ClInclude Include="source\Shader.h">
       <Filter>Code Files\rendering core</Filter>
     </ClInclude>
-    <ClInclude Include="source\RasterizerState.h">
-      <Filter>Code Files\rendering core</Filter>
-    </ClInclude>
     <ClInclude Include="source\Effect.h">
       <Filter>Code Files\rendering core</Filter>
     </ClInclude>
     <ClInclude Include="source\DeviceManager.h">
       <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\NoiseGenerator.h">
+      <Filter>Code Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\D3D11Helper.h">
+      <Filter>Code Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\Texture.h">
+      <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\RasterizerState.h">
+      <Filter>Code Files\rendering core\state objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\SamplerState.h">
+      <Filter>Code Files\rendering core\state objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,14 +146,26 @@
     <ClCompile Include="source\Shader.cpp">
       <Filter>Code Files\rendering core</Filter>
     </ClCompile>
-    <ClCompile Include="source\RasterizerState.cpp">
-      <Filter>Code Files\rendering core</Filter>
-    </ClCompile>
     <ClCompile Include="source\Effect.cpp">
       <Filter>Code Files\rendering core</Filter>
     </ClCompile>
     <ClCompile Include="source\DeviceManager.cpp">
       <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\NoiseGenerator.cpp">
+      <Filter>Code Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\D3D11Helper.cpp">
+      <Filter>Code Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Texture.cpp">
+      <Filter>Code Files\rendering core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\RasterizerState.cpp">
+      <Filter>Code Files\rendering core\state objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\SamplerState.cpp">
+      <Filter>Code Files\rendering core\state objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "DeviceManager.h"
 #include "Utils.h"
+
 #include "RasterizerState.h"
+#include "SamplerState.h"
 
 
 DeviceManager::DeviceManager() :
@@ -184,7 +186,36 @@ void DeviceManager::SetRasterizerState(RasterizerState& state)
 {
 	if(state._stateObject == nullptr)
 		_device->CreateRasterizerState(&state._desc, &state._stateObject.p);
+
 	_immediateContext->RSSetState(state._stateObject.p);
+}
+
+void DeviceManager::SetSamplerState(class SamplerState& state, Shader::Type shaderType, unsigned int slot)
+{
+	if(state._stateObject == nullptr)
+		_device->CreateSamplerState(&state._desc, &state._stateObject.p);
+
+	switch(shaderType)
+	{
+	case Shader::Type::PIXEL:
+		_immediateContext->PSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	case Shader::Type::VERTEX:
+		_immediateContext->VSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	case Shader::Type::GEOMETRY:
+		_immediateContext->GSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	case Shader::Type::HULL:
+		_immediateContext->HSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	case Shader::Type::DOMAIN:
+		_immediateContext->DSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	case Shader::Type::COMPUTE:
+		_immediateContext->CSSetSamplers(slot, 1, &state._stateObject.p);
+		break;
+	}
 }
 
 void DeviceManager::CleanupDevice()

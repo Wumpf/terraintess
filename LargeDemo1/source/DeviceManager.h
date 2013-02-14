@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Shader.h"
 
 class DeviceManager
 {
@@ -18,6 +19,8 @@ public:
 
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
+	void SetSamplerState(class SamplerState& state, Shader::Type shaderType, unsigned int slot = 0);	// not const, since a state object may be created
+	void SetSamplerStates(SamplerState* states, unsigned int numStates, Shader::Type shaderType, unsigned int startSlot = 0);
 
 	// getter
 	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }

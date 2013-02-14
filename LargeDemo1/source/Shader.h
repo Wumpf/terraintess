@@ -11,7 +11,8 @@ public:
 		PIXEL,
 		HULL,
 		DOMAIN,
-		GEOMETRY
+		GEOMETRY,
+		COMPUTE
 	};
 
 	/// sets shader to the device

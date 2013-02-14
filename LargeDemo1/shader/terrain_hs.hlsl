@@ -10,8 +10,7 @@ struct HS_CONSTANT_DATA_OUTPUT
 // Output control point
 struct HS_OUTPUT
 {
-	float3 Pos : POSITION;
-	float2 Tex : TEXCOORD;
+	float2 Pos2D : POSITION;
 };
 
 
@@ -22,13 +21,12 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 {
 	HS_CONSTANT_DATA_OUTPUT Output;
 
-	// todo: screen size oriented tess factor
 	Output.EdgeTessFactor[0] = 
 		Output.EdgeTessFactor[1] = 
 		Output.EdgeTessFactor[2] = 
 		Output.EdgeTessFactor[3] = 
 		Output.InsideTessFactor[0] =
-		Output.InsideTessFactor[1] = 16.0f; // e.g. could calculate dynamic tessellation factors instead
+		Output.InsideTessFactor[1] = 1.0f;
 
 	return Output;
 }
@@ -42,8 +40,7 @@ HS_OUTPUT main(InputPatch<HS_INPUT, NUM_CONTROL_POINTS> ip, uint i : SV_OutputCo
 {
 	HS_OUTPUT Output;
 
-	Output.Pos = ip[i].Pos;
-	Output.Tex = ip[i].Tex;
+	Output.Pos2D = ip[i].Pos2D;
 
 	return Output;
 }

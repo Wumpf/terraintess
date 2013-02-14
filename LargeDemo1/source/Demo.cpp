@@ -34,7 +34,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// 
 	_cube.reset(new Cube());
-	_terrain.reset(new Terrain());
+	_terrain.reset(new Terrain(8));
 
 	return true;
 }
@@ -72,7 +72,7 @@ void Demo::Draw(float timeSinceLastUpdate)
 
 
 	_cube->Draw(*_camera, _passedTimeSinceStart);
-	_terrain->Draw(*_camera);
+	_terrain->Draw(*_camera, 100.0f);
 
 
 	DeviceManager::Get().GetSwapChain()->Present(0, 0);
