@@ -1,7 +1,13 @@
 #include "stdafx.h"
 #include "SamplerState.h"
 
-SamplerState SamplerState::LinearWrap(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP);
+SamplerState SamplerState::TriLinearWrap(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP);
+SamplerState SamplerState::AnisotropicWrap(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP);
+SamplerState SamplerState::PointWrap(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP);
+SamplerState SamplerState::TriLinearClamp(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP);
+SamplerState SamplerState::AnisotropicClamp(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_CLAMP);
+SamplerState SamplerState::PointClamp(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP);
+
 
 SamplerState::SamplerState(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE adressMode, UINT maxAnisotropy,
 						float borderColor[], float minLod, float maxLod, D3D11_COMPARISON_FUNC comparisionFunc)

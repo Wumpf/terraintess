@@ -77,9 +77,6 @@
     <ClInclude Include="source\DeviceManager.h">
       <Filter>Code Files\rendering core</Filter>
     </ClInclude>
-    <ClInclude Include="source\NoiseGenerator.h">
-      <Filter>Code Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\D3D11Helper.h">
       <Filter>Code Files</Filter>
     </ClInclude>
@@ -91,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="source\SamplerState.h">
       <Filter>Code Files\rendering core\state objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\PerlinNoiseGenerator.h">
+      <Filter>Code Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\BufferObject.h">
+      <Filter>Code Files\rendering core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -152,9 +155,6 @@
     <ClCompile Include="source\DeviceManager.cpp">
       <Filter>Code Files\rendering core</Filter>
     </ClCompile>
-    <ClCompile Include="source\NoiseGenerator.cpp">
-      <Filter>Code Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\D3D11Helper.cpp">
       <Filter>Code Files</Filter>
     </ClCompile>
@@ -166,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="source\SamplerState.cpp">
       <Filter>Code Files\rendering core\state objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\PerlinNoiseGenerator.cpp">
+      <Filter>Code Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BufferObject.cpp">
+      <Filter>Code Files\rendering core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +194,12 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\terrain_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\globaltexturesampler.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\perlinnoisegenerator.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>

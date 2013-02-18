@@ -22,4 +22,16 @@ namespace Utils
 	void InitRandom(uint32_t seed);
 	uint32_t Random();
 	double Random(double min, double max);
-}
+	std::unique_ptr<float[]> RandomFloats(unsigned int numValues, float min, float max);
+
+	// enables "flag behaviour" for typed enums
+#define CLASS_ENUM_FLAG(type) \
+	namespace { \
+		type operator | (type lhs, type rhs) \
+		{ return (type)((uint32_t)lhs | (uint32_t)rhs); } \
+		type operator |= (type& lhs, type rhs) \
+		{ return lhs = static_cast<type>((uint32_t)lhs | (uint32_t)rhs); } \
+		bool operator & (type lhs, type rhs) \
+		{  return ((uint32_t)lhs & (uint32_t)rhs) > 0; } \
+	}
+};

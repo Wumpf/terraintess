@@ -218,6 +218,20 @@ void DeviceManager::SetSamplerState(class SamplerState& state, Shader::Type shad
 	}
 }
 
+
+void DeviceManager::SetSamplerState(class SamplerState& state, unsigned int slot)
+{
+	if(state._stateObject == nullptr)
+		_device->CreateSamplerState(&state._desc, &state._stateObject.p);
+
+	_immediateContext->PSSetSamplers(slot, 1, &state._stateObject.p);
+	_immediateContext->VSSetSamplers(slot, 1, &state._stateObject.p);
+	_immediateContext->GSSetSamplers(slot, 1, &state._stateObject.p);
+	_immediateContext->HSSetSamplers(slot, 1, &state._stateObject.p);
+	_immediateContext->DSSetSamplers(slot, 1, &state._stateObject.p);
+	_immediateContext->CSSetSamplers(slot, 1, &state._stateObject.p);
+}
+
 void DeviceManager::CleanupDevice()
 {
 	if(!_initialized)

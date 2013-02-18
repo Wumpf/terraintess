@@ -7,7 +7,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 {
 	_SYSTEMTIME time;
 	GetLocalTime(&time);
-	Utils::InitRandom(time.wMilliseconds);
+	Utils::InitRandom(*reinterpret_cast<uint32_t*>(&time));
 
 	Demo demo;
 	if(demo.Initialize(hInstance))

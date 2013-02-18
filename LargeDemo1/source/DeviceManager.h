@@ -19,13 +19,14 @@ public:
 
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
+	void SetSamplerState(class SamplerState& state, unsigned int slot = 0);
 	void SetSamplerState(class SamplerState& state, Shader::Type shaderType, unsigned int slot = 0);	// not const, since a state object may be created
 	void SetSamplerStates(SamplerState* states, unsigned int numStates, Shader::Type shaderType, unsigned int startSlot = 0);
 
 	// getter
 	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
-	ID3D11DeviceContext* GetImmediateContext() { return _immediateContext; }
+	ID3D11DeviceContext* GetContext() { return _immediateContext; }
 
 	unsigned int GetBackBufferWidth() const		{ return _backBufferWidth; }
 	unsigned int GetBackBufferHeight() const	{ return _backBufferHeight; }

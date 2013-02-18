@@ -39,13 +39,13 @@ void Effect::Activate()
 	if(_geometryShader.get())
 		_geometryShader->Activate();
 	else
-		DeviceManager::Get().GetImmediateContext()->GSSetShader(nullptr, nullptr, 0);
+		DeviceManager::Get().GetContext()->GSSetShader(nullptr, nullptr, 0);
 	if(_hullShader.get())
 		_hullShader->Activate();
 	else
-		DeviceManager::Get().GetImmediateContext()->HSSetShader(nullptr, nullptr, 0);
+		DeviceManager::Get().GetContext()->HSSetShader(nullptr, nullptr, 0);
 	if(_domainShader.get())
 		_domainShader->Activate();
 	else
-		DeviceManager::Get().GetImmediateContext()->DSSetShader(nullptr, nullptr, 0);
+		DeviceManager::Get().GetContext()->DSSetShader(nullptr, nullptr, 0);
 }

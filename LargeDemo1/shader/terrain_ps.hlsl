@@ -1,7 +1,6 @@
 #include "terrain_ds.hlsl"
 
 Texture2D DiffuseTexture : register(t0);
-SamplerState SamplerLinear : register(s0);
 
 float4 main(DS_OUTPUT input) : SV_TARGET
 {
@@ -10,5 +9,5 @@ float4 main(DS_OUTPUT input) : SV_TARGET
 	float NDotL = dot(normal, lightVec);
 	return float4(NDotL,NDotL,NDotL, 1.0f);*/
 
-	return DiffuseTexture.Sample(SamplerLinear, input.WorldPos.xz).rrrr;
+	return DiffuseTexture.Sample(SamplerAnisotropicWrap, input.WorldPos.xz).rrrr;
 }

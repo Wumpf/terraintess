@@ -26,7 +26,7 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 		Output.EdgeTessFactor[2] = 
 		Output.EdgeTessFactor[3] = 
 		Output.InsideTessFactor[0] =
-		Output.InsideTessFactor[1] = 1.0f;
+		Output.InsideTessFactor[1] = 64.0f;
 
 	return Output;
 }

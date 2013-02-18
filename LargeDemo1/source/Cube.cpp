@@ -100,7 +100,7 @@ Cube::~Cube()
 
 void Cube::Draw(const Camera& camera, float totalPassedTime)
 {
-	auto immediateContext = DeviceManager::Get().GetImmediateContext();
+	auto immediateContext = DeviceManager::Get().GetContext();
 
 	UINT stride = sizeof(Vertices::PositionTexture);
     UINT offset = 0;

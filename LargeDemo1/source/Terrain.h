@@ -1,5 +1,7 @@
 #pragma once
 
+class BufferObject;
+
 class Terrain
 {
 public:
@@ -9,16 +11,15 @@ public:
 	void Draw(const class Camera& camera, float totalSize);
 
 private:
-	CComPtr<ID3D11Buffer> _blockVertexBuffer;
-	unsigned int _numIndices;
-	CComPtr<ID3D11Buffer> _blockIndexBuffer;
+	std::shared_ptr<BufferObject> _blockVertexBuffer;
+	std::shared_ptr<BufferObject> _blockIndexBuffer;
 
-	CComPtr<ID3D11Buffer> _immutableConstantBuffer;
-	CComPtr<ID3D11Buffer> _perFrameConstantBuffer;
+	std::shared_ptr<BufferObject> _immutableConstantBuffer;
+	std::shared_ptr<BufferObject> _perFrameConstantBuffer;
 
-	std::unique_ptr<class Texture2D> _heightmapTexture;
+	std::shared_ptr<class Texture2D> _heightmapTexture;
 
-	std::unique_ptr<class Effect> _effect;
+	std::shared_ptr<class Effect> _effect;
 
 	unsigned int _blockVertexCountSqrt;
 };

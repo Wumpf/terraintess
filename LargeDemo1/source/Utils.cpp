@@ -45,4 +45,14 @@ namespace Utils
 	{
 		return (static_cast<double>(Random()) / UINT32_MAX) * max + min;
 	}
+
+	std::unique_ptr<float[]> RandomFloats(unsigned int numValues, float min, float max)
+	{
+		std::unique_ptr<float[]> whiteNoise(new float[numValues]);
+		float* end = whiteNoise.get() + numValues;
+		for(float* val=whiteNoise.get(); val<end; ++val)
+			*val = static_cast<float>(Utils::Random(min, max));
+
+		return whiteNoise;
+	}
 };

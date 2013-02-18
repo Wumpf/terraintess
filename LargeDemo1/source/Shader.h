@@ -107,3 +107,17 @@ public:
 private:
 	GeometryShader(ID3D11DeviceChild* shader) : Shader(shader, Type::GEOMETRY) {}
 };
+
+class ComputeShader : public Shader
+{
+public:
+	/// create from compiled shader file
+	static std::shared_ptr<ComputeShader> FromFile(const std::string& filename);
+
+	/// \copydoc Shader::Activate
+	void Activate();
+
+	~ComputeShader() {}
+private:
+	ComputeShader(ID3D11DeviceChild* shader) : Shader(shader, Type::COMPUTE) {}
+};

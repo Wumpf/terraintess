@@ -28,7 +28,7 @@ std::unique_ptr<char[]> Shader::LoadByteCodeFromFile(const std::string& filename
 
 void VertexShader::Activate()
 {
-	auto immediateContext = DeviceManager::Get().GetImmediateContext();
+	auto immediateContext = DeviceManager::Get().GetContext();
 	immediateContext->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(_shader.p), nullptr, 0);
 	immediateContext->IASetInputLayout(_inputLayout);
 }
@@ -51,7 +51,7 @@ std::shared_ptr<VertexShader> VertexShader::FromFile(const std::string& filename
 
 void PixelShader::Activate()
 {
-	DeviceManager::Get().GetImmediateContext()->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(_shader.p), nullptr, 0);
+	DeviceManager::Get().GetContext()->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(_shader.p), nullptr, 0);
 }
 
 std::shared_ptr<PixelShader> PixelShader::FromFile(const std::string& filename)
@@ -69,7 +69,7 @@ std::shared_ptr<PixelShader> PixelShader::FromFile(const std::string& filename)
 
 void HullShader::Activate()
 {
-	DeviceManager::Get().GetImmediateContext()->HSSetShader(reinterpret_cast<ID3D11HullShader*>(_shader.p), nullptr, 0);
+	DeviceManager::Get().GetContext()->HSSetShader(reinterpret_cast<ID3D11HullShader*>(_shader.p), nullptr, 0);
 }
 
 std::shared_ptr<HullShader> HullShader::FromFile(const std::string& filename)
@@ -87,7 +87,7 @@ std::shared_ptr<HullShader> HullShader::FromFile(const std::string& filename)
 
 void DomainShader::Activate()
 {
-	DeviceManager::Get().GetImmediateContext()->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(_shader.p), nullptr, 0);
+	DeviceManager::Get().GetContext()->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(_shader.p), nullptr, 0);
 }
 
 std::shared_ptr<DomainShader> DomainShader::FromFile(const std::string& filename)
@@ -105,7 +105,7 @@ std::shared_ptr<DomainShader> DomainShader::FromFile(const std::string& filename
 
 void GeometryShader::Activate()
 {
-	DeviceManager::Get().GetImmediateContext()->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(_shader.p), nullptr, 0);
+	DeviceManager::Get().GetContext()->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(_shader.p), nullptr, 0);
 }
 
 std::shared_ptr<GeometryShader> GeometryShader::FromFile(const std::string& filename)
@@ -119,4 +119,22 @@ std::shared_ptr<GeometryShader> GeometryShader::FromFile(const std::string& file
 	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateGeometryShader(byteCode.get(), fileLength, nullptr, &shader)));
 
 	return std::shared_ptr<GeometryShader>(new GeometryShader(shader));
+}
+
+void ComputeShader::Activate()
+{
+	DeviceManager::Get().GetContext()->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(_shader.p), nullptr, 0);
+}
+
+std::shared_ptr<ComputeShader> ComputeShader::FromFile(const std::string& filename)
+{
+	int fileLength; 
+	std::unique_ptr<char[]> byteCode = LoadByteCodeFromFile(filename, fileLength);
+	if(!byteCode.get())
+		return nullptr;
+
+	ID3D11ComputeShader* shader;
+	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateComputeShader(byteCode.get(), fileLength, nullptr, &shader)));
+
+	return std::shared_ptr<ComputeShader>(new ComputeShader(shader));
 }

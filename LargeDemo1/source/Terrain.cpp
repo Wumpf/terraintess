@@ -8,8 +8,12 @@
 #include "RasterizerState.h"
 #include "SamplerState.h"
 
-#include "NoiseGenerator.h"
 #include "Texture.h"
+#include "Utils.h"
+
+#include "PerlinNoiseGenerator.h"
+
+#include "BufferObject.h"
 
 Terrain::Terrain(unsigned int blockVertexCountSqrt) :
 	_blockVertexCountSqrt(blockVertexCountSqrt),
@@ -32,20 +36,12 @@ Terrain::Terrain(unsigned int blockVertexCountSqrt) :
 			++vertex;
 		}
 	}
-    D3D11_BUFFER_DESC bd;
-    ZeroMemory( &bd, sizeof(bd) );
-	bd.Usage = D3D11_USAGE_IMMUTABLE;
-    bd.ByteWidth = sizeof(Vertices::Position2D) * numVertices;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    D3D11_SUBRESOURCE_DATA InitData;
-    InitData.pSysMem = vertices.get();
-	InitData.SysMemSlicePitch = InitData.SysMemPitch = 0;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_blockVertexBuffer)));
+	_blockVertexBuffer.reset(new BufferObject(vertices.get(), numVertices, sizeof(Vertices::Position2D), D3D11_BIND_VERTEX_BUFFER));
 
     // Create index buffer
 	unsigned int numQuadsSqrt =_blockVertexCountSqrt-1;
-	_numIndices = numQuadsSqrt*numQuadsSqrt * 4;
-    std::unique_ptr<WORD> indices(new WORD[_numIndices]);
+	unsigned int numIndices = numQuadsSqrt*numQuadsSqrt * 4;
+    std::unique_ptr<WORD> indices(new WORD[numIndices]);
 	WORD* index = indices.get();
 	for(unsigned int y=0; y<numQuadsSqrt; ++y)
 	{
@@ -58,22 +54,16 @@ Terrain::Terrain(unsigned int blockVertexCountSqrt) :
 			index += 4;
 		}
 	}
-    bd.Usage = D3D11_USAGE_IMMUTABLE;
-    bd.ByteWidth = _numIndices * sizeof(WORD);
-    bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    InitData.pSysMem = indices.get();
-    assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_blockIndexBuffer)));
+	_blockIndexBuffer.reset(new BufferObject(indices.get(), numIndices, sizeof(WORD), D3D11_BIND_INDEX_BUFFER));
 
     // Create the constant buffers
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof(SimpleMath::Matrix);
-    bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, NULL, &_perFrameConstantBuffer)));
+	_perFrameConstantBuffer = BufferObject::CreateConstantBuffer(sizeof(SimpleMath::Matrix));
 
 
 	// create heightmap
-	_heightmapTexture = Texture2D::StandardTextureFromData(NoiseGenerator::WhiteNoise_Float(1024, 1024, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, 1024, 1024);
+	//_heightmapTexture = Texture2D::CreateFromData(Utils::RandomFloats(1024*1024, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, 1024, 1024);
+	PerlinNoiseGenerator noiseGen;
+	_heightmapTexture = noiseGen.Generate(1024, 1024);
 }
 
 
@@ -83,30 +73,27 @@ Terrain::~Terrain()
 
 void Terrain::Draw(const Camera& camera, float totalSize)
 {
-	auto immediateContext = DeviceManager::Get().GetImmediateContext();
+	auto immediateContext = DeviceManager::Get().GetContext();
 
 	UINT stride = sizeof(Vertices::Position2D);
     UINT offset = 0;
-	immediateContext->IASetVertexBuffers(0, 1, &_blockVertexBuffer.p, &stride, &offset);
-	immediateContext->IASetIndexBuffer(_blockIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	immediateContext->IASetVertexBuffers(0, 1, _blockVertexBuffer->GetBufferPointer(), &stride, &offset);
+	immediateContext->IASetIndexBuffer(_blockIndexBuffer->GetBuffer(), DXGI_FORMAT_R16_UINT, 0);
     immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-
-	D3D11_MAPPED_SUBRESOURCE resource;
-	immediateContext->Map(_perFrameConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
+	
 	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateTranslation(-0.5f, -7.0f, -0.5f) * 
 							SimpleMath::Matrix::CreateScale(totalSize, 1.0f, totalSize) * camera.GetViewProjectionMatrix();
-	memcpy(resource.pData, &worldViewProjection, sizeof(SimpleMath::Matrix));
-	immediateContext->Unmap(_perFrameConstantBuffer, 0);
-	immediateContext->DSSetConstantBuffers(0, 1, &_perFrameConstantBuffer.p);
+	_perFrameConstantBuffer->Write(&worldViewProjection);
 
-	auto resView = _heightmapTexture->GetRessourceView().p;
+	immediateContext->DSSetConstantBuffers(0, 1, _perFrameConstantBuffer->GetBufferPointer());
+
+	auto resView = _heightmapTexture->GetShaderResourceView().p;
 	immediateContext->PSSetShaderResources(0, 1, &resView);
+	immediateContext->DSSetShaderResources(0, 1, &resView);
 	
-	DeviceManager::Get().SetSamplerState(SamplerState::LinearWrap, Shader::Type::PIXEL, 0);
 	_effect->Activate();
 
 //	DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
-	immediateContext->DrawIndexed(_numIndices, 0, 0);
+	immediateContext->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
 //	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
 }
