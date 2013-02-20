@@ -55,7 +55,8 @@ Cube::Cube() :
     D3D11_SUBRESOURCE_DATA InitData;
     ZeroMemory( &InitData, sizeof(InitData) );
     InitData.pSysMem = vertices;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_vertexBuffer)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_vertexBuffer);
+	assert(SUCCEEDED(hr));
 
     // Create index buffer
     WORD indices[] =
@@ -83,14 +84,16 @@ Cube::Cube() :
     bd.ByteWidth = sizeof(WORD) * 36;
     bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
     InitData.pSysMem = indices;
-    assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_indexBuffer)));
+	hr = DeviceManager::Get().GetDevice()->CreateBuffer(&bd, &InitData, &_indexBuffer);
+    assert(SUCCEEDED(hr));
 
     // Create the constant buffers
 	bd.Usage = D3D11_USAGE_DYNAMIC;
 	bd.ByteWidth = sizeof(SimpleMath::Matrix);
     bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&bd, NULL, &_constantBuffer)));
+	hr = DeviceManager::Get().GetDevice()->CreateBuffer(&bd, NULL, &_constantBuffer);
+    assert(SUCCEEDED(hr));
 }
 
 
@@ -111,7 +114,8 @@ void Cube::Draw(const Camera& camera, float totalPassedTime)
 	D3D11_MAPPED_SUBRESOURCE resource;
 	immediateContext->Map(_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
 
-	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateFromYawPitchRoll(InputManager::Get().GetMouseWheel() * 0.0001f, 0.0f, 0.0f) * camera.GetViewProjectionMatrix();
+	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateTranslation(0.0f, 50.0f, 0.0f) *
+					SimpleMath::Matrix::CreateFromYawPitchRoll(InputManager::Get().GetMouseWheel() * 0.0001f, 0.0f, 0.0f) * camera.GetViewProjectionMatrix();
 	memcpy(resource.pData, &worldViewProjection, sizeof(SimpleMath::Matrix));
 	immediateContext->Unmap(_constantBuffer, 0);
 	immediateContext->VSSetConstantBuffers(0, 1, &_constantBuffer.p);

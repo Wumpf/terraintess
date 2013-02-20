@@ -2,21 +2,27 @@
 #include "BufferObject.h"
 #include "DeviceManager.h"
 
-BufferObject::BufferObject(const void* initalData, unsigned int elementSize, D3D11_BIND_FLAG bindings, D3D11_CPU_ACCESS_FLAG cpuAccess, D3D11_USAGE usage) :
-	BufferObject(initalData, 1, elementSize, bindings, cpuAccess, usage)
+BufferObject::BufferObject(const void* initalData, unsigned int elementSize, D3D11_BIND_FLAG bindings, D3D11_CPU_ACCESS_FLAG cpuAccess, D3D11_USAGE usage)
 {
+	Init(initalData, 1, elementSize, bindings, cpuAccess, usage);
 }
 
-BufferObject::BufferObject(const void* initalData, unsigned int numElements, unsigned int elementSize, D3D11_BIND_FLAG bindings, D3D11_CPU_ACCESS_FLAG cpuAccess, D3D11_USAGE usage) :
-	_numElements(numElements)
+BufferObject::BufferObject(const void* initalData, unsigned int numElements, unsigned int elementSize, D3D11_BIND_FLAG bindings, D3D11_CPU_ACCESS_FLAG cpuAccess, D3D11_USAGE usage)
+{
+	Init(initalData, numElements, elementSize, bindings, cpuAccess, usage);
+}
+
+void BufferObject::Init(const void* initalData, unsigned int numElements, unsigned int elementSize, D3D11_BIND_FLAG bindings, D3D11_CPU_ACCESS_FLAG cpuAccess, D3D11_USAGE usage)
 {
 	assert(cpuAccess == 0 || usage != D3D11_USAGE_IMMUTABLE);
 	assert(initalData != nullptr || usage != D3D11_USAGE_IMMUTABLE);
 
+	_numElements = numElements;
+
 	// D3D11 ERROR: ID3D11Device::CreateBuffer: The Dimensions are invalid. For ConstantBuffers, marked with the D3D11_BIND_CONSTANT_BUFFER BindFlag, the ByteWidth (value = 8) must be a multiple of 16. [ STATE_CREATION ERROR #66: CREATEBUFFER_INVALIDDIMENSIONS]
 	unsigned int bufferSizeBytes = numElements * elementSize;
 	if(bindings & D3D11_BIND_CONSTANT_BUFFER)
-		bufferSizeBytes += bufferSizeBytes % 16;
+		bufferSizeBytes += (16 - bufferSizeBytes % 16) % 16;
 
 	_bufferDesc.ByteWidth = bufferSizeBytes;
 	_bufferDesc.Usage = usage;
@@ -30,10 +36,14 @@ BufferObject::BufferObject(const void* initalData, unsigned int numElements, uns
 		D3D11_SUBRESOURCE_DATA InitData;
 		InitData.pSysMem = initalData;
 		InitData.SysMemSlicePitch = InitData.SysMemPitch = 0;
-		assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&_bufferDesc, &InitData, &_bufferResource)));
+		HRESULT hr = DeviceManager::Get().GetDevice()->CreateBuffer(&_bufferDesc, &InitData, &_bufferResource);
+		assert(SUCCEEDED(hr));
 	}
 	else
-		assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateBuffer(&_bufferDesc, nullptr, &_bufferResource)));
+	{
+		HRESULT hr = DeviceManager::Get().GetDevice()->CreateBuffer(&_bufferDesc, nullptr, &_bufferResource);
+		assert(SUCCEEDED(hr));
+	}
 }
 
 BufferObject::~BufferObject(void)
@@ -48,13 +58,13 @@ void BufferObject::Write(const void* data, unsigned int dataSize)
 
 	if(_bufferDesc.Usage == D3D11_USAGE_DEFAULT)
 	{
-		DeviceManager::Get().GetContext()->UpdateSubresource(_bufferResource.p, 0, nullptr, data, dataSize, 0);
+		DeviceManager::Get().GetContext()->UpdateSubresource(_bufferResource, 0, nullptr, data, dataSize, 0);
 	}
 	else
 	{
 		D3D11_MAPPED_SUBRESOURCE resource;
-		DeviceManager::Get().GetContext()->Map(_bufferResource.p, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-		memcpy(resource.pData, data, dataSize);
-		DeviceManager::Get().GetContext()->Unmap(_bufferResource.p, 0);
+		DeviceManager::Get().GetContext()->Map(_bufferResource, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+		memcpy_s(resource.pData, dataSize, data, dataSize);
+		DeviceManager::Get().GetContext()->Unmap(_bufferResource, 0);
 	}
 }

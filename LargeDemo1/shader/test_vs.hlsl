@@ -1,5 +1,3 @@
-#include "globalconstantbuffers.hlsl"
-
 struct VS_INPUT
 {
     float3 Pos : POSITION;
@@ -10,6 +8,11 @@ struct PS_INPUT
 {
     float4 Pos : SV_POSITION;
     float2 Tex : TEXCOORD;
+};
+
+cbuffer cbObjectGeneral : register(b0)
+{
+    matrix WorldViewProjection;
 };
 
 PS_INPUT main( VS_INPUT input )

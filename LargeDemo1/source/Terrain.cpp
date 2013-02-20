@@ -15,12 +15,13 @@
 
 #include "BufferObject.h"
 
-Terrain::Terrain(unsigned int blockVertexCountSqrt) :
+Terrain::Terrain(unsigned int heightmapResolution, unsigned int blockVertexCountSqrt) :
 	_blockVertexCountSqrt(blockVertexCountSqrt),
 	_effect(new Effect("shader/terrain_vs.cso", Vertices::Position2D::desc, Vertices::Position2D::numDescElements, "shader/terrain_ps.cso",
 						"", "shader/terrain_hs.cso", "shader/terrain_ds.cso"))
 {
-	assert(_blockVertexCountSqrt >= 2);
+	
+	(_blockVertexCountSqrt >= 2);
 	assert(_blockVertexCountSqrt*_blockVertexCountSqrt < 0xFFFF);
 
 	// Create vertex buffer
@@ -57,13 +58,28 @@ Terrain::Terrain(unsigned int blockVertexCountSqrt) :
 	_blockIndexBuffer.reset(new BufferObject(indices.get(), numIndices, sizeof(WORD), D3D11_BIND_INDEX_BUFFER));
 
     // Create the constant buffers
-	_perFrameConstantBuffer = BufferObject::CreateConstantBuffer(sizeof(SimpleMath::Matrix));
+	_patchConstantBuffer.reset(new ConstantBuffer<PatchConstants>());
+	PatchConstants& patchConstants = _patchConstantBuffer->GetContent();
+	patchConstants.WorldPosition = SimpleMath::Vector2(-5.0f);
+	patchConstants.PlaneScale = 20.0f;
+	patchConstants.HeightmapTexcoordPosition = SimpleMath::Vector2(0.0f);
+	patchConstants.HeightmapTexcoordScale = 0.1f;
+	_patchConstantBuffer->UpdateGPUBuffer();
+
+	_terrainConstantBuffer.reset(new ConstantBuffer<TerrainConstants>());
+	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
+	terrainConstants.HeightScale = 30.0f;
+	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
+	float textureInWorldSize = heightmapResolution * patchConstants.PlaneScale * patchConstants.HeightmapTexcoordScale;
+	terrainConstants.HeightmapTexelSizeWorld_doubled = 1.0f * textureInWorldSize *  1.0f / heightmapResolution;	// todo: not doubled atm - better?
+	_terrainConstantBuffer->UpdateGPUBuffer();
+
 
 
 	// create heightmap
 	//_heightmapTexture = Texture2D::CreateFromData(Utils::RandomFloats(1024*1024, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, 1024, 1024);
 	PerlinNoiseGenerator noiseGen;
-	_heightmapTexture = noiseGen.Generate(1024, 1024);
+	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.5f, 8);
 }
 
 
@@ -80,20 +96,24 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->IASetVertexBuffers(0, 1, _blockVertexBuffer->GetBufferPointer(), &stride, &offset);
 	immediateContext->IASetIndexBuffer(_blockIndexBuffer->GetBuffer(), DXGI_FORMAT_R16_UINT, 0);
     immediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST);
-	
-	SimpleMath::Matrix worldViewProjection = SimpleMath::Matrix::CreateTranslation(-0.5f, -7.0f, -0.5f) * 
-							SimpleMath::Matrix::CreateScale(totalSize, 1.0f, totalSize) * camera.GetViewProjectionMatrix();
-	_perFrameConstantBuffer->Write(&worldViewProjection);
 
-	immediateContext->DSSetConstantBuffers(0, 1, _perFrameConstantBuffer->GetBufferPointer());
+	immediateContext->VSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
+	immediateContext->DSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
+	immediateContext->PSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
+
+	immediateContext->VSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
+	immediateContext->DSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
+	immediateContext->PSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
+
 
 	auto resView = _heightmapTexture->GetShaderResourceView().p;
+	immediateContext->VSSetShaderResources(0, 1, &resView);
 	immediateContext->PSSetShaderResources(0, 1, &resView);
 	immediateContext->DSSetShaderResources(0, 1, &resView);
 	
 	_effect->Activate();
 
-//	DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
+	DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
 	immediateContext->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
-//	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
+	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
 }

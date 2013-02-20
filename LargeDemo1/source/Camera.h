@@ -1,5 +1,7 @@
 #pragma once
 
+template<class T> class ConstantBuffer;
+
 class Camera
 {
 public:
@@ -8,9 +10,12 @@ public:
 
 	virtual void Update(float timeSinceLastUpdate) {}
 
-	const SimpleMath::Matrix& GetProjectionMatrix() const { return _projectionMatrix; }
-	const SimpleMath::Matrix& GetViewMatrix() const { return _viewMatrix; }
-	const SimpleMath::Matrix& GetViewProjectionMatrix() const { return _viewProjectionMatrix; }
+	void UpdateGPUBuffer();
+	void ActivateCameraConstantBufferForAllShader(unsigned int bufferSlotIndex);
+
+	const SimpleMath::Matrix& GetProjectionMatrix() const;
+	const SimpleMath::Matrix& GetViewMatrix() const;
+	const SimpleMath::Matrix& GetViewProjectionMatrix() const;
 
 	const SimpleMath::Vector3& GetPosition() const { return _position; }
 	const SimpleMath::Vector3& GetUp() const { return _up; }
@@ -24,8 +29,13 @@ protected:
 	SimpleMath::Vector3 _viewDir;
 
 private:
-	SimpleMath::Matrix _projectionMatrix;
-	SimpleMath::Matrix _viewMatrix;
 
-	SimpleMath::Matrix _viewProjectionMatrix;
+	struct Constants
+	{
+		SimpleMath::Matrix _viewProjectionMatrix;
+		
+		SimpleMath::Matrix _projectionMatrix;
+		SimpleMath::Matrix _viewMatrix;
+	};
+	std::unique_ptr<ConstantBuffer<Constants>> _constantBuffer;
 };

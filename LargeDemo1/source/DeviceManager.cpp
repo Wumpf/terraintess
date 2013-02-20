@@ -124,15 +124,15 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
 	sd.Scaling = DXGI_SCALING_STRETCH;
 	sd.Flags = 0;
 	sd.SampleDesc = multisamplingSettings;
-	assert(SUCCEEDED(hr = dxgiFactory->CreateSwapChainForHwnd(_device, windowHandle, &sd, nullptr, nullptr, &_swapChain)));
+	hr = dxgiFactory->CreateSwapChainForHwnd(_device, windowHandle, &sd, nullptr, nullptr, &_swapChain);
 	if(FAILED(hr))
 		return false;
 
 	// create backbuffer & view
-	assert(SUCCEEDED(hr = _swapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&_backBuffer)));
+	hr = _swapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&_backBuffer);
 	if(FAILED(hr))
 		return false;
-	assert(SUCCEEDED(hr = _device->CreateRenderTargetView( _backBuffer, NULL, &_backBufferView)));
+	hr = _device->CreateRenderTargetView( _backBuffer, NULL, &_backBufferView);
 	if(FAILED(hr))
 		return false;
 
@@ -149,7 +149,7 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
     descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     descDepth.CPUAccessFlags = 0;
     descDepth.MiscFlags = 0;
-    assert(SUCCEEDED(hr = _device->CreateTexture2D( &descDepth, NULL, &_depthBuffer)));
+    hr = _device->CreateTexture2D( &descDepth, NULL, &_depthBuffer);
 	if(FAILED(hr))
 		return false;
     // Create the depth stencil view
@@ -158,7 +158,7 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
     descDSV.Format = descDepth.Format;
 	descDSV.ViewDimension = multisamplingSettings.Count > 0 ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
     descDSV.Texture2D.MipSlice = 0;
-	assert(SUCCEEDED(hr = _device->CreateDepthStencilView( _depthBuffer, &descDSV, &_depthBufferView)));
+	hr = _device->CreateDepthStencilView( _depthBuffer, &descDSV, &_depthBufferView);
 	if(FAILED(hr))
 		return false;
 

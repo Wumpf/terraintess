@@ -13,10 +13,10 @@ PerlinNoiseGenerator::PerlinNoiseGenerator() :
 {
 }
 
-std::shared_ptr<Texture2D> PerlinNoiseGenerator::Generate(unsigned int width, unsigned int height)
+std::shared_ptr<Texture2D> PerlinNoiseGenerator::Generate(unsigned int width, unsigned int height, float persistance, unsigned int octaveCount)
 {
-	std::shared_ptr<Texture2D> whiteNoise(Texture2D::CreateFromData(Utils::RandomFloats(width* height, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, width, height, TextureCreationFlags::SHADERRES_VIEW));
-	std::shared_ptr<Texture2D> noiseOutput(Texture2D::CreateEmpty(DXGI_FORMAT_R32_FLOAT, width, height, TextureCreationFlags::SHADERRES_VIEW | TextureCreationFlags::UNORDEREDACCESS_VIEW));
+	std::shared_ptr<Texture2D> whiteNoise(Texture2D::CreateFromData(Utils::RandomFloats(width* height, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, width, height, Texture2D::CreationFlags::SHADERRES_VIEW));
+	std::shared_ptr<Texture2D> noiseOutput(Texture2D::CreateEmpty(DXGI_FORMAT_R32_FLOAT, width, height, Texture2D::CreationFlags::SHADERRES_VIEW | Texture2D::CreationFlags::UNORDEREDACCESS_VIEW));
 
 	auto view = noiseOutput->GetUnorderedAcessView().p;	// make easier!
 	DeviceManager::Get().GetContext()->CSSetUnorderedAccessViews(0, 1, &view, nullptr);
@@ -28,20 +28,23 @@ std::shared_ptr<Texture2D> PerlinNoiseGenerator::Generate(unsigned int width, un
 		float Persistance;
 		uint32_t OctaveCount;
 	};
-	SettingsBuffer settings;
-	settings.TextureSize.x = static_cast<float>(width);
-	settings.TextureSize.y = static_cast<float>(height);
-	settings.Persistance = 0.7f;
-	settings.OctaveCount = 8;
 
-	auto constantBuffer = BufferObject::CreateConstantBuffer(sizeof(settings));
-	constantBuffer->Write(&settings);
-	DeviceManager::Get().GetContext()->CSSetConstantBuffers(0, 1, constantBuffer->GetBufferPointer());
+
+	auto constantBuffer = ConstantBuffer<SettingsBuffer>();
+
+	SettingsBuffer& constantBufferContent = constantBuffer.GetContent();
+	constantBufferContent.TextureSize.x = static_cast<float>(width);
+	constantBufferContent.TextureSize.y = static_cast<float>(height);
+	constantBufferContent.Persistance = persistance;
+	constantBufferContent.OctaveCount = octaveCount;
+	constantBuffer.UpdateGPUBuffer();
+
+	DeviceManager::Get().GetContext()->CSSetConstantBuffers(0, 1, constantBuffer.GetBufferPointer());
 	
 	auto viewPointer = whiteNoise->GetShaderResourceView().p;
 	DeviceManager::Get().GetContext()->CSSetShaderResources(0, 1, &viewPointer);
 
-	DeviceManager::Get().GetContext()->Dispatch(static_cast<UINT>(ceilf(width) / static_cast<float>(NUM_THREADS_PER_GROUP) ), height, 1);
+	DeviceManager::Get().GetContext()->Dispatch(static_cast<UINT>(ceilf(static_cast<float>(width)) / static_cast<float>(NUM_THREADS_PER_GROUP) ), height, 1);
 
 	view = nullptr;
 	DeviceManager::Get().GetContext()->CSSetUnorderedAccessViews(0, 1, &view, nullptr);

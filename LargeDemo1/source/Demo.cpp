@@ -32,7 +32,9 @@ bool Demo::Initialize(HINSTANCE hInstance)
 		return false;
 	DeviceManager::Get().CreateSwapChainAndBackBuffer(_window->GetHandle(), DeviceManager::Get().GetAvailableMultisamplingSettings().back());
 	
-	_camera.reset(new FreeCamera(Utils::DegToRad(80.0f), DeviceManager::Get().GetBackBufferAspectRatio()));
+	// camera
+	_camera.reset(new FreeCamera(Utils::DegToRad(70.0f), DeviceManager::Get().GetBackBufferAspectRatio()));
+	
 
 	// register standard sampler
 	DeviceManager::Get().SetSamplerState(SamplerState::PointWrap, 0);
@@ -45,7 +47,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// 
 	_cube.reset(new Cube());
-	_terrain.reset(new Terrain(8));
+	_terrain.reset(new Terrain(1024, 8));
 
 	return true;
 }
@@ -81,6 +83,8 @@ void Demo::Draw(float timeSinceLastUpdate)
 {
 	DeviceManager::Get().ClearBackAndDepthBuffer();
 
+	_camera->UpdateGPUBuffer();
+	_camera->ActivateCameraConstantBufferForAllShader(5);
 
 	_cube->Draw(*_camera, _passedTimeSinceStart);
 	_terrain->Draw(*_camera, 100.0f);

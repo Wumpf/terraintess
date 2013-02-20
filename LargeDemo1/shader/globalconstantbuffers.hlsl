@@ -1,6 +1,8 @@
 
 
-cbuffer cbObjectGeneral : register(b0)
+cbuffer CameraConstants : register(b5)
 {
-    matrix WorldViewProjection;
+	matrix ViewProjection;
+	matrix Projection;
+	matrix View;
 };

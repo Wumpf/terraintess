@@ -26,7 +26,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	float totalAmplitude = 0.0f;
 	float output = 0.0f;
 
-	
+	// veeery unoptimized
+	// shared mem could also make a huge difference
 
 	for(int octave = OctaveCount - 1; octave >= 0; --octave)	// starting with biggest octave
     {

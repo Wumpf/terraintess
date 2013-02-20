@@ -41,9 +41,11 @@ std::shared_ptr<VertexShader> VertexShader::FromFile(const std::string& filename
 		return nullptr;
 
 	ID3D11VertexShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateVertexShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateVertexShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 	ID3D11InputLayout* inputLayout;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateInputLayout(inputLayoutDesc, numInputLayoutElements, byteCode.get(), fileLength, &inputLayout)));
+	hr = DeviceManager::Get().GetDevice()->CreateInputLayout(inputLayoutDesc, numInputLayoutElements, byteCode.get(), fileLength, &inputLayout);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<VertexShader>(new VertexShader(shader, inputLayout));
 }
@@ -62,7 +64,8 @@ std::shared_ptr<PixelShader> PixelShader::FromFile(const std::string& filename)
 		return nullptr;
 
 	ID3D11PixelShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreatePixelShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreatePixelShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<PixelShader>(new PixelShader(shader));
 }
@@ -80,7 +83,8 @@ std::shared_ptr<HullShader> HullShader::FromFile(const std::string& filename)
 		return nullptr;
 
 	ID3D11HullShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateHullShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateHullShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<HullShader>(new HullShader(shader));
 }
@@ -98,7 +102,8 @@ std::shared_ptr<DomainShader> DomainShader::FromFile(const std::string& filename
 		return nullptr;
 
 	ID3D11DomainShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateDomainShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateDomainShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<DomainShader>(new DomainShader(shader));
 }
@@ -116,7 +121,8 @@ std::shared_ptr<GeometryShader> GeometryShader::FromFile(const std::string& file
 		return nullptr;
 
 	ID3D11GeometryShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateGeometryShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateGeometryShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<GeometryShader>(new GeometryShader(shader));
 }
@@ -134,7 +140,8 @@ std::shared_ptr<ComputeShader> ComputeShader::FromFile(const std::string& filena
 		return nullptr;
 
 	ID3D11ComputeShader* shader;
-	assert(SUCCEEDED(DeviceManager::Get().GetDevice()->CreateComputeShader(byteCode.get(), fileLength, nullptr, &shader)));
+	HRESULT hr = DeviceManager::Get().GetDevice()->CreateComputeShader(byteCode.get(), fileLength, nullptr, &shader);
+	assert(SUCCEEDED(hr));
 
 	return std::shared_ptr<ComputeShader>(new ComputeShader(shader));
 }
