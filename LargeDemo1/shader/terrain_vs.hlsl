@@ -10,7 +10,6 @@ struct VS_INPUT
 struct HS_INPUT
 {
     float3 WorldPos : POSITION;
-	float2 WorldPosOnScreen : SCREENPOS;
 	float2 HeightmapCoord : TEXCOORD;
 };
 
@@ -22,8 +21,8 @@ HS_INPUT main(VS_INPUT input)
 	output.HeightmapCoord = input.Pos2D * HeightmapTexcoordScale + HeightmapTexcoordPosition;
 	output.WorldPos.y = Heightmap.SampleLevel(SamplerPointWrap, output.HeightmapCoord, 0).r * HeightScale;	// mipmap?
 
-	float4 projectedPos = mul(ViewProjection, float4(output.WorldPos, 1.0f));
-	output.WorldPosOnScreen = projectedPos.xy / projectedPos.w;
+	//float4 projectedPos = mul(ViewProjection, float4(output.WorldPos, 1.0f));
+	//output.WorldPosOnScreen = projectedPos.xy / projectedPos.w;
 
     return output;
 }

@@ -61,17 +61,18 @@ Terrain::Terrain(unsigned int heightmapResolution, unsigned int blockVertexCount
 	_patchConstantBuffer.reset(new ConstantBuffer<PatchConstants>());
 	PatchConstants& patchConstants = _patchConstantBuffer->GetContent();
 	patchConstants.WorldPosition = SimpleMath::Vector2(-5.0f);
-	patchConstants.PlaneScale = 20.0f;
+	patchConstants.PlaneScale = 50.0f;
 	patchConstants.HeightmapTexcoordPosition = SimpleMath::Vector2(0.0f);
-	patchConstants.HeightmapTexcoordScale = 0.1f;
+	patchConstants.HeightmapTexcoordScale = 0.2;
 	_patchConstantBuffer->UpdateGPUBuffer();
 
 	_terrainConstantBuffer.reset(new ConstantBuffer<TerrainConstants>());
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
 	terrainConstants.HeightScale = 30.0f;
 	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
-	float textureInWorldSize = heightmapResolution * patchConstants.PlaneScale * patchConstants.HeightmapTexcoordScale;
-	terrainConstants.HeightmapTexelSizeWorld_doubled = 1.0f * textureInWorldSize *  1.0f / heightmapResolution;	// todo: not doubled atm - better?
+	terrainConstants.TesselationFactor = 100.0f;
+	float textureInWorldSize = patchConstants.PlaneScale / patchConstants.HeightmapTexcoordScale;
+	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * textureInWorldSize * terrainConstants.HeightmapTexelSize;	// todo: not doubled atm - better?
 	_terrainConstantBuffer->UpdateGPUBuffer();
 
 
@@ -79,7 +80,7 @@ Terrain::Terrain(unsigned int heightmapResolution, unsigned int blockVertexCount
 	// create heightmap
 	//_heightmapTexture = Texture2D::CreateFromData(Utils::RandomFloats(1024*1024, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, 1024, 1024);
 	PerlinNoiseGenerator noiseGen;
-	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.5f, 8);
+	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.4f, 7);
 }
 
 
@@ -100,6 +101,7 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->VSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
 	immediateContext->DSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
 	immediateContext->PSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
+	immediateContext->HSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
 
 	immediateContext->VSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 	immediateContext->DSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
@@ -113,7 +115,7 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	
 	_effect->Activate();
 
-	DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
+	//DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
 	immediateContext->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
-	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
+	//DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
 }

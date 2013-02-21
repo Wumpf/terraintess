@@ -18,18 +18,25 @@ struct HS_OUTPUT
 
 #define NUM_CONTROL_POINTS 4
 
+float EstimateSphereSizeAroundEndge(float3 p0, float3 p1)
+{
+	float edgeLength = length(p1 - p0);
+	float3 edgeMid = (p1 + p0) * 0.5f;
+	float2 edgeMidProjected = mul(ViewProjection, float4(edgeMid, 1.0f)).xw;
+	float2 edgeUpProjected = mul(ViewProjection, float4(edgeMid + View[0].xyz, 1.0f)).xw; 
+	return abs(edgeMidProjected.x / edgeMidProjected.y - edgeUpProjected.x / edgeUpProjected.y);
+}
+
 // Patch Constant Function
 HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_POINTS> ip, uint PatchID : SV_PrimitiveID)
 {
 	HS_CONSTANT_DATA_OUTPUT Output;
 
 	// estimate size on screen
-	float screenSize = max(abs(ip[0].WorldPosOnScreen.x - ip[1].WorldPosOnScreen.x), abs(ip[2].WorldPosOnScreen.y - ip[3].WorldPosOnScreen.y));
-
-	Output.EdgeTessFactor[0] = length(ip[1].WorldPosOnScreen - ip[0].WorldPosOnScreen) * 80.0f;
-	Output.EdgeTessFactor[1] = length(ip[2].WorldPosOnScreen - ip[1].WorldPosOnScreen) * 80.0f;
-	Output.EdgeTessFactor[2] = length(ip[3].WorldPosOnScreen - ip[2].WorldPosOnScreen) * 80.0f;
-	Output.EdgeTessFactor[3] = length(ip[0].WorldPosOnScreen - ip[3].WorldPosOnScreen) * 80.0f;
+	Output.EdgeTessFactor[0] = EstimateSphereSizeAroundEndge(ip[0].WorldPos, ip[3].WorldPos) * TesselationFactor;
+	Output.EdgeTessFactor[1] = EstimateSphereSizeAroundEndge(ip[1].WorldPos, ip[0].WorldPos) * TesselationFactor;
+	Output.EdgeTessFactor[2] = EstimateSphereSizeAroundEndge(ip[2].WorldPos, ip[1].WorldPos) * TesselationFactor;
+	Output.EdgeTessFactor[3] = EstimateSphereSizeAroundEndge(ip[3].WorldPos, ip[2].WorldPos) * TesselationFactor;
 
 	float midTess = (Output.EdgeTessFactor[0] + Output.EdgeTessFactor[1] + Output.EdgeTessFactor[2] + Output.EdgeTessFactor[3]) * 0.25f;
 	Output.InsideTessFactor[0] = Output.InsideTessFactor[1] = midTess;

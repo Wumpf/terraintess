@@ -21,7 +21,8 @@ private:
 	{
 		float HeightScale;		// max terrain height
 		float HeightmapTexelSize;
-		float HeightmapTexelSizeWorld_doubled; 
+		float HeightmapTexelSizeWorld_doubled;
+		float TesselationFactor;
 	};
 	std::unique_ptr<ConstantBuffer<TerrainConstants>> _terrainConstantBuffer;
 

@@ -16,8 +16,12 @@ DS_OUTPUT main(HS_CONSTANT_DATA_OUTPUT input, float2 domain : SV_DomainLocation,
 						 lerp(patch[3].WorldPos, patch[2].WorldPos, domain.x), domain.y);
 
 
+	
 	output.HeightmapCoord = lerp(lerp(patch[0].HeightmapCoord, patch[1].HeightmapCoord, domain.x),
 						 lerp(patch[3].HeightmapCoord, patch[2].HeightmapCoord, domain.x), domain.y);
+
+	output.WorldPos.y = Heightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord, 0.0f).r * HeightScale;	// todo mipmap dependent on vertex distance
+
 
 	output.Pos = mul(ViewProjection, float4(output.WorldPos, 1.0f));
 
