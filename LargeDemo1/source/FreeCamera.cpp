@@ -31,7 +31,7 @@ void FreeCamera::Update(float timeSinceLastUpdate)
 					InputManager::Get().IsKeyboardKeyDownF(Key::A) - InputManager::Get().IsKeyboardKeyDownF(Key::Left);
 
 	if(InputManager::Get().IsKeyboardKeyDown(Key::Control))
-		forward *= 2.0f;
+		forward *= 10.0f;
 
 	_position += (timeSinceLastUpdate * _moveSpeed * forward) * _viewDir;
 

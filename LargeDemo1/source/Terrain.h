@@ -10,6 +10,10 @@ public:
 	~Terrain();
 
 	void Draw(const class Camera& camera, float totalSize);
+
+	void SetWireframe(bool wireframe) { _wireframe = wireframe; }
+	bool GetWireframe() const { return _wireframe; }
+
 private:
 
 	void DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D);
@@ -18,6 +22,8 @@ private:
 	unsigned int _maxVerticesPossiblePerTesseleatedBlock;
 	float _totalTerrainSize;
 	float _minTesselatedVertexWorldDistance;
+
+	bool _wireframe;
 
 
 	std::shared_ptr<BufferObject> _blockVertexBuffer;	// todo rendering without vertex/index buffer

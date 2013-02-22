@@ -21,6 +21,7 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	_maxVerticesPossiblePerTesseleatedBlock(blockVertexCountSqrt * D3D11_TESSELLATOR_MAX_TESSELLATION_FACTOR),
 	_minTesselatedVertexWorldDistance(minTesselatedVertexWorldDistancee),
 	_blockVertexCountSqrt(blockVertexCountSqrt),
+	_wireframe(false),
 	_effect(new Effect("shader/terrain_vs.cso", Vertices::Position2D::desc, Vertices::Position2D::numDescElements, "shader/terrain_ps.cso",
 						"", "shader/terrain_hs.cso", "shader/terrain_ds.cso"))
 {
@@ -67,7 +68,7 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
 	terrainConstants.HeightScale = 300.0f;
 	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
-	terrainConstants.TesselationFactor = 100.0f;
+	terrainConstants.TesselationFactor = 200.0f;
 	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * _totalTerrainSize / heightmapResolution;	// heightmapPixelSizeInWorldCordinates
 	_terrainConstantBuffer->UpdateGPUBuffer();
 
@@ -86,31 +87,33 @@ Terrain::~Terrain()
 void Terrain::DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D)
 {
 	SimpleMath::Vector2 center = (min + max) / 2;
+	float blockSize = max.x - min.x;
 	float distanceToCamSq = SimpleMath::Vector2::DistanceSquared(center, cameraPos2D);
-
-	if(distanceToCamSq)
+	if(blockSize > distanceToCamSq)
+		distanceToCamSq = 0.0f;
 
 	if(false)	// culling
 		return;
 	
-	float size = max.x - min.x;
-	if(size > _minTesselatedVertexWorldDistance * _maxVerticesPossiblePerTesseleatedBlock)
+	
+	if(distanceToCamSq / (blockSize * blockSize) > 4.0f ||	// camera is 2x current block size distant - far enough away to rendert NOW
+		blockSize <= _minTesselatedVertexWorldDistance * _maxVerticesPossiblePerTesseleatedBlock)	// minimum size
+	{
+		PatchConstants& content = _patchConstantBuffer->GetContent();
+		content.WorldPosition = min;
+		content.PlaneScale = blockSize;
+		content.HeightmapTexcoordScale = blockSize / _totalTerrainSize;
+		content.HeightmapTexcoordPosition = SimpleMath::Vector2(min / _totalTerrainSize) + SimpleMath::Vector2(0.5f);
+		_patchConstantBuffer->UpdateGPUBuffer();
+		
+		DeviceManager::Get().GetContext()->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
+	}
+	else // subdivide
 	{
 		DrawRecursive(min, center, cameraPos2D);
 		DrawRecursive(SimpleMath::Vector2(center.x, min.y), SimpleMath::Vector2(max.x, center.y) , cameraPos2D);
 		DrawRecursive(center, max, cameraPos2D);
 		DrawRecursive(SimpleMath::Vector2(min.x, center.y), SimpleMath::Vector2(center.x, max.y) , cameraPos2D);
-	}
-	else // draw
-	{
-		PatchConstants& content = _patchConstantBuffer->GetContent();
-		content.WorldPosition = min;
-		content.PlaneScale = size;
-		content.HeightmapTexcoordScale = size / _totalTerrainSize;
-		content.HeightmapTexcoordPosition = SimpleMath::Vector2(min / _totalTerrainSize) + SimpleMath::Vector2(0.5f);
-		_patchConstantBuffer->UpdateGPUBuffer();
-		
-		DeviceManager::Get().GetContext()->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
 	}
 }
 
@@ -142,7 +145,9 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->DSSetShaderResources(0, 1, &resView);
 	_effect->Activate();
 
-	//DeviceManager::Get().SetRasterizerState(RasterizerState::WireframeFrontOnly);
+	if(_wireframe)
+		DeviceManager::Get().SetRasterizerState(RasterizerState::WireframeFrontOnly);
 	DrawRecursive(SimpleMath::Vector2(-_totalTerrainSize*0.5f), SimpleMath::Vector2(_totalTerrainSize*0.5f), SimpleMath::Vector2(camera.GetPosition().x, camera.GetPosition().z));
-	//DeviceManager::Get().SetRasterizerState(RasterizerState::CullBack);
+	if(_wireframe)
+		DeviceManager::Get().SetRasterizerState(RasterizerState::CullBack);
 }

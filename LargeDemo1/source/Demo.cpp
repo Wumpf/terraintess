@@ -77,6 +77,9 @@ void Demo::RunMainLoop()
 void Demo::Update(float timeSinceLastUpdate)
 {
 	_camera->Update(timeSinceLastUpdate);
+
+	if(InputManager::Get().WasKeyboardKeyPressed(Key::W))
+		_terrain->SetWireframe(!_terrain->GetWireframe());
 }
 
 void Demo::Draw(float timeSinceLastUpdate)
