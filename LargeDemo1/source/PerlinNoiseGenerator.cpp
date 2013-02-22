@@ -6,7 +6,7 @@
 #include "DeviceManager.h"
 #include "BufferObject.h"
 
-const unsigned int PerlinNoiseGenerator::NUM_THREADS_PER_GROUP = 512;
+const unsigned int PerlinNoiseGenerator::NUM_THREADS_PER_GROUP = 256;
 
 PerlinNoiseGenerator::PerlinNoiseGenerator() :
 	_computeShader(ComputeShader::FromFile("shader/perlinnoisegenerator.cso"))
@@ -46,8 +46,14 @@ std::shared_ptr<Texture2D> PerlinNoiseGenerator::Generate(unsigned int width, un
 
 	DeviceManager::Get().GetContext()->Dispatch(static_cast<UINT>(ceilf(static_cast<float>(width)) / static_cast<float>(NUM_THREADS_PER_GROUP) ), height, 1);
 
+	// reset for proper disposing
 	view = nullptr;
+	viewPointer = nullptr;
 	DeviceManager::Get().GetContext()->CSSetUnorderedAccessViews(0, 1, &view, nullptr);
+	DeviceManager::Get().GetContext()->CSSetShaderResources(0, 1, &viewPointer);
+	ID3D11Buffer* nullBuffer = nullptr;
+	DeviceManager::Get().GetContext()->CSSetConstantBuffers(0, 1, &nullBuffer);
+
 
 	return noiseOutput;
 }

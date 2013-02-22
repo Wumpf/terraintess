@@ -15,6 +15,7 @@ public:
 	static RasterizerState CullFront;
 	static RasterizerState CullBack;
 	static RasterizerState Wireframe;
+	static RasterizerState WireframeFrontOnly;
 
 private:
 	D3D11_RASTERIZER_DESC _desc;

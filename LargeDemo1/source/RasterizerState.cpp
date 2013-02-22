@@ -6,6 +6,7 @@ RasterizerState RasterizerState::CullNone(D3D11_FILL_SOLID, D3D11_CULL_NONE);
 RasterizerState RasterizerState::CullFront(D3D11_FILL_SOLID, D3D11_CULL_FRONT);
 RasterizerState RasterizerState::CullBack(D3D11_FILL_SOLID, D3D11_CULL_BACK);
 RasterizerState RasterizerState::Wireframe(D3D11_FILL_WIREFRAME, D3D11_CULL_NONE);
+RasterizerState RasterizerState::WireframeFrontOnly(D3D11_FILL_WIREFRAME, D3D11_CULL_BACK);
 
 
 RasterizerState::RasterizerState(D3D11_FILL_MODE FillMode, D3D11_CULL_MODE CullMode, bool FrontCounterClockwise, int DepthBias, float DepthBiasClamp,

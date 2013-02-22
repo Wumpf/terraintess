@@ -15,7 +15,11 @@
 
 #include "BufferObject.h"
 
-Terrain::Terrain(unsigned int heightmapResolution, unsigned int blockVertexCountSqrt) :
+Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float minTesselatedVertexWorldDistancee, unsigned int blockVertexCountSqrt) :
+	_heightmapResolution(heightmapResolution),
+	_totalTerrainSize(totalTerrainSize),
+	_maxVerticesPossiblePerTesseleatedBlock(blockVertexCountSqrt * D3D11_TESSELLATOR_MAX_TESSELLATION_FACTOR),
+	_minTesselatedVertexWorldDistance(minTesselatedVertexWorldDistancee),
 	_blockVertexCountSqrt(blockVertexCountSqrt),
 	_effect(new Effect("shader/terrain_vs.cso", Vertices::Position2D::desc, Vertices::Position2D::numDescElements, "shader/terrain_ps.cso",
 						"", "shader/terrain_hs.cso", "shader/terrain_ds.cso"))
@@ -59,28 +63,19 @@ Terrain::Terrain(unsigned int heightmapResolution, unsigned int blockVertexCount
 
     // Create the constant buffers
 	_patchConstantBuffer.reset(new ConstantBuffer<PatchConstants>());
-	PatchConstants& patchConstants = _patchConstantBuffer->GetContent();
-	patchConstants.WorldPosition = SimpleMath::Vector2(-5.0f);
-	patchConstants.PlaneScale = 50.0f;
-	patchConstants.HeightmapTexcoordPosition = SimpleMath::Vector2(0.0f);
-	patchConstants.HeightmapTexcoordScale = 0.2;
-	_patchConstantBuffer->UpdateGPUBuffer();
-
 	_terrainConstantBuffer.reset(new ConstantBuffer<TerrainConstants>());
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
-	terrainConstants.HeightScale = 30.0f;
+	terrainConstants.HeightScale = 300.0f;
 	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
 	terrainConstants.TesselationFactor = 100.0f;
-	float textureInWorldSize = patchConstants.PlaneScale / patchConstants.HeightmapTexcoordScale;
-	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * textureInWorldSize * terrainConstants.HeightmapTexelSize;	// todo: not doubled atm - better?
+	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * _totalTerrainSize / heightmapResolution;	// heightmapPixelSizeInWorldCordinates
 	_terrainConstantBuffer->UpdateGPUBuffer();
 
 
 
 	// create heightmap
-	//_heightmapTexture = Texture2D::CreateFromData(Utils::RandomFloats(1024*1024, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, 1024, 1024);
 	PerlinNoiseGenerator noiseGen;
-	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.4f, 7);
+	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.55f, 8);
 }
 
 
@@ -88,9 +83,43 @@ Terrain::~Terrain()
 {
 }
 
+void Terrain::DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D)
+{
+	SimpleMath::Vector2 center = (min + max) / 2;
+	float distanceToCamSq = SimpleMath::Vector2::DistanceSquared(center, cameraPos2D);
+
+	if(distanceToCamSq)
+
+	if(false)	// culling
+		return;
+	
+	float size = max.x - min.x;
+	if(size > _minTesselatedVertexWorldDistance * _maxVerticesPossiblePerTesseleatedBlock)
+	{
+		DrawRecursive(min, center, cameraPos2D);
+		DrawRecursive(SimpleMath::Vector2(center.x, min.y), SimpleMath::Vector2(max.x, center.y) , cameraPos2D);
+		DrawRecursive(center, max, cameraPos2D);
+		DrawRecursive(SimpleMath::Vector2(min.x, center.y), SimpleMath::Vector2(center.x, max.y) , cameraPos2D);
+	}
+	else // draw
+	{
+		PatchConstants& content = _patchConstantBuffer->GetContent();
+		content.WorldPosition = min;
+		content.PlaneScale = size;
+		content.HeightmapTexcoordScale = size / _totalTerrainSize;
+		content.HeightmapTexcoordPosition = SimpleMath::Vector2(min / _totalTerrainSize) + SimpleMath::Vector2(0.5f);
+		_patchConstantBuffer->UpdateGPUBuffer();
+		
+		DeviceManager::Get().GetContext()->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
+	}
+}
+
 void Terrain::Draw(const Camera& camera, float totalSize)
 {
 	auto immediateContext = DeviceManager::Get().GetContext();
+
+//	auto immediateContext = DeviceManager::Get().GetContext();
+
 
 	UINT stride = sizeof(Vertices::Position2D);
     UINT offset = 0;
@@ -103,19 +132,17 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->PSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
 	immediateContext->HSSetConstantBuffers(0, 1, _terrainConstantBuffer->GetBufferPointer());
 
-	immediateContext->VSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
+	immediateContext->VSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());	
 	immediateContext->DSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 	immediateContext->PSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
-
 
 	auto resView = _heightmapTexture->GetShaderResourceView().p;
 	immediateContext->VSSetShaderResources(0, 1, &resView);
 	immediateContext->PSSetShaderResources(0, 1, &resView);
 	immediateContext->DSSetShaderResources(0, 1, &resView);
-	
 	_effect->Activate();
 
-	//DeviceManager::Get().SetRasterizerState(RasterizerState::Wireframe);
-	immediateContext->DrawIndexed(_blockIndexBuffer->GetNumElements(), 0, 0);
-	//DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
+	//DeviceManager::Get().SetRasterizerState(RasterizerState::WireframeFrontOnly);
+	DrawRecursive(SimpleMath::Vector2(-_totalTerrainSize*0.5f), SimpleMath::Vector2(_totalTerrainSize*0.5f), SimpleMath::Vector2(camera.GetPosition().x, camera.GetPosition().z));
+	//DeviceManager::Get().SetRasterizerState(RasterizerState::CullBack);
 }

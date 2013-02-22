@@ -5,13 +5,13 @@
 #include "DeviceManager.h"
 
 Camera::Camera(float fov, float aspectRatio) :
-	_position(0.0f, 20.0f, 0.0f),
+	_position(0.0f, 200.0f, 0.0f),
 	 _up(0.0f, 1.0f, 0.0f),
 	_viewDir(1.0f, 0.0f, 0.0f),
 
 	_constantBuffer(new ConstantBuffer<Camera::Constants>())
 {
-	_constantBuffer->GetContent()._projectionMatrix = SimpleMath::Matrix::CreatePerspectiveFieldOfView(fov, aspectRatio, 0.1f, 1000.0f);
+	_constantBuffer->GetContent()._projectionMatrix = SimpleMath::Matrix::CreatePerspectiveFieldOfView(fov, aspectRatio, 0.1f, 5000.0f);
 	
 
 	UpdateMatrices();

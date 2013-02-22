@@ -1,6 +1,6 @@
 #include "globaltexturesampler.hlsl"
 
-#define BLOCK_SIZE 512
+#define BLOCK_SIZE 256
 
 Texture2D NoiseTexture : register(t0);	// tiling, simple 2d adressing | simplificated, no mip
 RWTexture2D<float> PerlinNoiseOut : register(u0);

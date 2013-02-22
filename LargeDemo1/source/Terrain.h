@@ -6,13 +6,21 @@ template<class T> class ConstantBuffer;
 class Terrain
 {
 public:
-	Terrain(unsigned int heightmapResolution, unsigned int blockVertexCountSqrt);
+	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float minTesselatedVertexWorldDistance, unsigned int blockVertexCountSqrt);
 	~Terrain();
 
 	void Draw(const class Camera& camera, float totalSize);
-
 private:
-	std::shared_ptr<BufferObject> _blockVertexBuffer;
+
+	void DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D);
+
+	unsigned int _heightmapResolution;
+	unsigned int _maxVerticesPossiblePerTesseleatedBlock;
+	float _totalTerrainSize;
+	float _minTesselatedVertexWorldDistance;
+
+
+	std::shared_ptr<BufferObject> _blockVertexBuffer;	// todo rendering without vertex/index buffer
 	std::shared_ptr<BufferObject> _blockIndexBuffer;
 
 	std::shared_ptr<class Texture2D> _heightmapTexture;
