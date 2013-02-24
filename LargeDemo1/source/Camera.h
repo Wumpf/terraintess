@@ -36,6 +36,8 @@ private:
 		
 		SimpleMath::Matrix _projectionMatrix;
 		SimpleMath::Matrix _viewMatrix;
+		SimpleMath::Vector3 _position;
+		float padding;
 	};
 	std::unique_ptr<ConstantBuffer<Constants>> _constantBuffer;
 };

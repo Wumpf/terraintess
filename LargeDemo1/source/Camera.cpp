@@ -27,10 +27,12 @@ void Camera::UpdateMatrices()
 
 	constants._viewMatrix = SimpleMath::Matrix::CreateLookAt(_position, _position + _viewDir , _up);
 	constants._viewProjectionMatrix = constants._viewMatrix * constants._projectionMatrix;
+	
 }
 
 void Camera::UpdateGPUBuffer()
 {
+	_constantBuffer->GetContent()._position = _position;
 	_constantBuffer->UpdateGPUBuffer();
 }
 
