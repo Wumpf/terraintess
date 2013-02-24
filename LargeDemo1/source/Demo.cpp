@@ -47,7 +47,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// 
 	_cube.reset(new Cube());
-	_terrain.reset(new Terrain(2048*3, 2048, 0.1f, 9));
+	_terrain.reset(new Terrain(2048*2, 2048, 8));
 
 	return true;
 }

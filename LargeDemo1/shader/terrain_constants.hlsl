@@ -3,7 +3,7 @@ cbuffer TerrainConstants :  register(b0)
 	float HeightScale			: packoffset(c0.x);		// max terrain height
 	float HeightmapTexelSize	: packoffset(c0.y);	
 	float HeightmapTexelSizeWorld_doubled : packoffset(c0.z);	// size of a texel in worldcoordinates doubled
-	float TesselationFactor : packoffset(c0.w);
+	float TrianglesPerClipSpaceUnit : packoffset(c0.w);
 }
 
 cbuffer PatchConstants : register(b1)

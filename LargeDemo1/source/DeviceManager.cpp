@@ -8,7 +8,13 @@
 
 DeviceManager::DeviceManager() :
 	_initialized(false),
-	_device(nullptr)
+	_device(nullptr),
+
+	_backBuffer(nullptr),
+	_backBufferView(nullptr),
+	_depthBuffer(nullptr),
+	_depthBufferView(nullptr),
+	_swapChain(nullptr)
 {
 }
 
@@ -94,6 +100,12 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
 	_samplingSettings = multisamplingSettings;
 	HRESULT hr;
 
+	Utils::SafeReleaseCOM(_backBuffer);
+	Utils::SafeReleaseCOM(_backBufferView);
+	Utils::SafeReleaseCOM(_depthBuffer);
+	Utils::SafeReleaseCOM(_depthBufferView);
+	Utils::SafeReleaseCOM(_swapChain);
+
 	// width from window
     RECT rc;
     GetClientRect(windowHandle, &rc);
@@ -173,6 +185,11 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
     _backBufferViewport.TopLeftY = 0;
     _immediateContext->RSSetViewports( 1, &_backBufferViewport );
 
+
+	// thats a resize!
+	for(auto it : _backBufferResizeCallbacks)
+		it.second(_backBufferWidth, _backBufferHeight);
+
 	return true;
 }
 
@@ -181,6 +198,7 @@ void DeviceManager::ClearBackAndDepthBuffer(const SimpleMath::Color& color)
 	_immediateContext->ClearRenderTargetView(_backBufferView, color);
 	_immediateContext->ClearDepthStencilView(_depthBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
+
 
 void DeviceManager::SetRasterizerState(RasterizerState& state)
 {
@@ -250,4 +268,14 @@ void DeviceManager::CleanupDevice()
 
 
 	_initialized = false;
+}
+
+void DeviceManager::RegisterBackBufferResizeCallback(const std::string& identifier, const std::function<void(unsigned int, unsigned int)>& callback)
+{
+	_backBufferResizeCallbacks.insert(std::pair<const std::string, std::function<void(unsigned int, unsigned int)>>(identifier, callback));
+}
+
+void DeviceManager::UnregisterBackBufferResizeCallback(const std::string& identifier)
+{
+	_backBufferResizeCallbacks.erase(identifier);
 }

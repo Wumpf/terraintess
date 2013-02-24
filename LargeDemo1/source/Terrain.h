@@ -6,7 +6,7 @@ template<class T> class ConstantBuffer;
 class Terrain
 {
 public:
-	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float minTesselatedVertexWorldDistance, unsigned int blockVertexCountSqrt);
+	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float _pixelPerTriangle, unsigned int patchCounterPerBlockSqrt = 8);
 	~Terrain();
 
 	void Draw(const class Camera& camera, float totalSize);
@@ -15,13 +15,14 @@ public:
 	bool GetWireframe() const { return _wireframe; }
 
 private:
-
+	void OnBackBufferResize(unsigned int height, unsigned int width);
 	void DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D);
 
 	unsigned int _heightmapResolution;
-	unsigned int _maxVerticesPossiblePerTesseleatedBlock;
 	float _totalTerrainSize;
-	float _minTesselatedVertexWorldDistance;
+	float _minimumWorldBlockSize;
+
+	float _pixelPerTriangle;
 
 	bool _wireframe;
 
@@ -36,7 +37,7 @@ private:
 		float HeightScale;		// max terrain height
 		float HeightmapTexelSize;
 		float HeightmapTexelSizeWorld_doubled;
-		float TesselationFactor;
+		float TrianglesPerClipSpaceUnit;
 	};
 	std::unique_ptr<ConstantBuffer<TerrainConstants>> _terrainConstantBuffer;
 

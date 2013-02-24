@@ -15,12 +15,12 @@
 
 #include "BufferObject.h"
 
-Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float minTesselatedVertexWorldDistancee, unsigned int blockVertexCountSqrt) :
+Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, unsigned int patchCounterPerBlockSqrt) :
 	_heightmapResolution(heightmapResolution),
 	_totalTerrainSize(totalTerrainSize),
-	_maxVerticesPossiblePerTesseleatedBlock(blockVertexCountSqrt * D3D11_TESSELLATOR_MAX_TESSELLATION_FACTOR),
-	_minTesselatedVertexWorldDistance(minTesselatedVertexWorldDistancee),
-	_blockVertexCountSqrt(blockVertexCountSqrt),
+	_blockVertexCountSqrt(patchCounterPerBlockSqrt + 1),
+	_minimumWorldBlockSize(patchCounterPerBlockSqrt * totalTerrainSize / heightmapResolution),	// try to give every vertex a heightmap-texel
+	_pixelPerTriangle(pixelPerTriangle),
 	_wireframe(false),
 	_effect(new Effect("shader/terrain_vs.cso", Vertices::Position2D::desc, Vertices::Position2D::numDescElements, "shader/terrain_ps.cso",
 						"", "shader/terrain_hs.cso", "shader/terrain_ds.cso"))
@@ -68,7 +68,7 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
 	terrainConstants.HeightScale = 300.0f;
 	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
-	terrainConstants.TesselationFactor = 200.0f;
+	terrainConstants.TrianglesPerClipSpaceUnit = (DeviceManager::Get().GetBackBufferWidth() / _pixelPerTriangle) / 2.0f;
 	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * _totalTerrainSize / heightmapResolution;	// heightmapPixelSizeInWorldCordinates
 	_terrainConstantBuffer->UpdateGPUBuffer();
 
@@ -84,6 +84,13 @@ Terrain::~Terrain()
 {
 }
 
+void Terrain::OnBackBufferResize(unsigned int height, unsigned int width)
+{
+	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
+	terrainConstants.TrianglesPerClipSpaceUnit = 2.0f / DeviceManager::Get().GetBackBufferWidth() / _pixelPerTriangle;
+	_terrainConstantBuffer->UpdateGPUBuffer();
+}
+
 void Terrain::DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D)
 {
 	SimpleMath::Vector2 center = (min + max) / 2;
@@ -97,7 +104,7 @@ void Terrain::DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Ve
 	
 	
 	if(distanceToCamSq / (blockSize * blockSize) > 4.0f ||	// camera is 2x current block size distant - far enough away to rendert NOW
-		blockSize <= _minTesselatedVertexWorldDistance * _maxVerticesPossiblePerTesseleatedBlock)	// minimum size
+		blockSize <= _minimumWorldBlockSize)	// minimum size
 	{
 		PatchConstants& content = _patchConstantBuffer->GetContent();
 		content.WorldPosition = min;
@@ -144,6 +151,7 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->PSSetShaderResources(0, 1, &resView);
 	immediateContext->DSSetShaderResources(0, 1, &resView);
 	_effect->Activate();
+
 
 	if(_wireframe)
 		DeviceManager::Get().SetRasterizerState(RasterizerState::WireframeFrontOnly);

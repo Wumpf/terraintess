@@ -15,7 +15,13 @@ public:
 	bool CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_SAMPLE_DESC& samplingSettings);
 	void CleanupDevice();
 
+	void ResizeBackBuffer(unsigned int width, unsigned int height);
+
 	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
+
+	// backbuffer resize observer
+	void RegisterBackBufferResizeCallback(const std::string& identifier, const std::function<void(unsigned int, unsigned int)>& callback);
+	void UnregisterBackBufferResizeCallback(const std::string& identifier);
 
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
@@ -26,7 +32,7 @@ public:
 	// getter
 	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
-	ID3D11DeviceContext* GetContext() { return _immediateContext; }
+	ID3D11DeviceContext* GetContext()		{ return _immediateContext; }
 
 	unsigned int GetBackBufferWidth() const		{ return _backBufferWidth; }
 	unsigned int GetBackBufferHeight() const	{ return _backBufferHeight; }
@@ -56,4 +62,6 @@ private:
 	DXGI_SAMPLE_DESC _samplingSettings;
 
 	D3D11_VIEWPORT _backBufferViewport;
+
+	std::unordered_map<std::string, std::function<void(unsigned int, unsigned int)>> _backBufferResizeCallbacks;
 };

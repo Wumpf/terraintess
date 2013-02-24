@@ -14,6 +14,6 @@ float4 main(DS_OUTPUT input) : SV_TARGET
 	float3 normal = normalize(cross(vecdz, vecdx));
 
 	float3 lightVec = normalize(float3(0.8f, 0.5f, 0.0f));
-	float NDotL = dot(normal, lightVec);
+	float NDotL = dot(normal, lightVec)*0.8f + 0.2f;
 	return float4(NDotL, NDotL, NDotL, 1.0f);
 }

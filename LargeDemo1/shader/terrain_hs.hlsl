@@ -23,7 +23,7 @@ float EstimateSphereSizeAroundEndge(float3 p0, float3 p1)
 	float edgeLength = length(p1 - p0);
 	float3 edgeMid = (p1 + p0) * 0.5f;
 	float2 edgeMidProjected = mul(ViewProjection, float4(edgeMid, 1.0f)).xw;
-	float2 edgeUpProjected = mul(ViewProjection, float4(edgeMid + View[0].xyz, 1.0f)).xw; 
+	float2 edgeUpProjected = mul(ViewProjection, float4(edgeMid + View[0].xyz * edgeLength, 1.0f)).xw; 
 	return abs(edgeMidProjected.x / edgeMidProjected.y - edgeUpProjected.x / edgeUpProjected.y);
 
 	// TODO: Cull!
@@ -37,12 +37,12 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 	// silhouettes? -> normal?
 
 	// estimate size on screen
-	Output.EdgeTessFactor[0] = EstimateSphereSizeAroundEndge(ip[0].WorldPos, ip[3].WorldPos) * TesselationFactor;
-	Output.EdgeTessFactor[1] = EstimateSphereSizeAroundEndge(ip[1].WorldPos, ip[0].WorldPos) * TesselationFactor;
-	Output.EdgeTessFactor[2] = EstimateSphereSizeAroundEndge(ip[2].WorldPos, ip[1].WorldPos) * TesselationFactor;
-	Output.EdgeTessFactor[3] = EstimateSphereSizeAroundEndge(ip[3].WorldPos, ip[2].WorldPos) * TesselationFactor;
+	Output.EdgeTessFactor[0] = EstimateSphereSizeAroundEndge(ip[0].WorldPos, ip[3].WorldPos) * TrianglesPerClipSpaceUnit;
+	Output.EdgeTessFactor[1] = EstimateSphereSizeAroundEndge(ip[1].WorldPos, ip[0].WorldPos) * TrianglesPerClipSpaceUnit;
+	Output.EdgeTessFactor[2] = EstimateSphereSizeAroundEndge(ip[2].WorldPos, ip[1].WorldPos) * TrianglesPerClipSpaceUnit;
+	Output.EdgeTessFactor[3] = EstimateSphereSizeAroundEndge(ip[3].WorldPos, ip[2].WorldPos) * TrianglesPerClipSpaceUnit;
 
-//	Output.EdgeTessFactor[0] = Output.EdgeTessFactor[1] = Output.EdgeTessFactor[2] = Output.EdgeTessFactor[3] = 1;
+	//Output.EdgeTessFactor[0] = Output.EdgeTessFactor[1] = Output.EdgeTessFactor[2] = Output.EdgeTessFactor[3] = 1;
 
 	float midTess = (Output.EdgeTessFactor[0] + Output.EdgeTessFactor[1] + Output.EdgeTessFactor[2] + Output.EdgeTessFactor[3]) * 0.25f;
 	Output.InsideTessFactor[0] = Output.InsideTessFactor[1] = midTess;
