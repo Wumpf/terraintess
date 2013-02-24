@@ -1,4 +1,4 @@
-cbuffer TerrainConstants :  register(b0)
+cbuffer TerrainConstants : register(b0)
 {
 	float HeightScale			: packoffset(c0.x);		// max terrain height
 	float HeightmapTexelSize	: packoffset(c0.y);	

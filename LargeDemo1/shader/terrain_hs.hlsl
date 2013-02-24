@@ -27,6 +27,8 @@ float EstimateSphereSizeAroundEndge(const float3 p0, const float3 p1, float edge
 
 bool InFrustum(const float3 p, const float margin)
 {
+	// function based on NVIDIA's TerrainTessellation Sample
+
 	float3 cameraToPoint = p - CameraPosition;
 	if(length(cameraToPoint) < margin)
 		return true;

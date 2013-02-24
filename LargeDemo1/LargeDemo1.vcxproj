@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dxgi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ObjectFileOutput>$(OutputPath)%(RelativeDir)%(Filename).cso</ObjectFileOutput>
@@ -152,7 +152,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -170,6 +170,8 @@
     <ClInclude Include="source\Demo.h" />
     <ClInclude Include="source\DeviceManager.h" />
     <ClInclude Include="source\Effect.h" />
+    <ClInclude Include="source\FontRenderer.h" />
+    <ClInclude Include="source\FontSheet.h" />
     <ClInclude Include="source\FreeCamera.h" />
     <ClInclude Include="source\InputManager.h" />
     <ClInclude Include="source\PerlinNoiseGenerator.h" />
@@ -201,6 +203,8 @@
     <ClCompile Include="source\Demo.cpp" />
     <ClCompile Include="source\DeviceManager.cpp" />
     <ClCompile Include="source\Effect.cpp" />
+    <ClCompile Include="source\FontRenderer.cpp" />
+    <ClCompile Include="source\FontSheet.cpp" />
     <ClCompile Include="source\FreeCamera.cpp" />
     <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -333,6 +337,18 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)shader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)shader;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <FxCompile Include="shader\font_gs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shader\font_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shader\font_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

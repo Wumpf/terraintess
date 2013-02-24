@@ -24,6 +24,15 @@
     <Filter Include="Code Files\rendering core\state objects">
       <UniqueIdentifier>{4879d544-7f0e-474c-9305-db7805497521}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shader\terrain">
+      <UniqueIdentifier>{4c6eeeb9-836b-49db-8089-944c23f7cf3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\font">
+      <UniqueIdentifier>{28e453d0-de70-4366-9cde-e47d55510b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Code Files\font">
+      <UniqueIdentifier>{bec380a5-8a1d-4506-a89e-35b56daae99f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -94,6 +103,12 @@
     </ClInclude>
     <ClInclude Include="source\BufferObject.h">
       <Filter>Code Files\rendering core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FontRenderer.h">
+      <Filter>Code Files\font</Filter>
+    </ClInclude>
+    <ClInclude Include="source\FontSheet.h">
+      <Filter>Code Files\font</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +188,12 @@
     <ClCompile Include="source\BufferObject.cpp">
       <Filter>Code Files\rendering core</Filter>
     </ClCompile>
+    <ClCompile Include="source\FontSheet.cpp">
+      <Filter>Code Files\font</Filter>
+    </ClCompile>
+    <ClCompile Include="source\FontRenderer.cpp">
+      <Filter>Code Files\font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shader\test_vs.hlsl">
@@ -184,26 +205,35 @@
     <FxCompile Include="shader\globalconstantbuffers.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
-    <FxCompile Include="shader\terrain_ds.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\terrain_hs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\terrain_vs.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
-    <FxCompile Include="shader\terrain_ps.hlsl">
-      <Filter>Shader</Filter>
-    </FxCompile>
     <FxCompile Include="shader\globaltexturesampler.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="shader\perlinnoisegenerator.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="shader\terrain_vs.hlsl">
+      <Filter>Shader\terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_ds.hlsl">
+      <Filter>Shader\terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_hs.hlsl">
+      <Filter>Shader\terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\terrain_ps.hlsl">
+      <Filter>Shader\terrain</Filter>
+    </FxCompile>
     <FxCompile Include="shader\terrain_constants.hlsl">
-      <Filter>Shader</Filter>
+      <Filter>Shader\terrain</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\font_gs.hlsl">
+      <Filter>Shader\font</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\font_ps.hlsl">
+      <Filter>Shader\font</Filter>
+    </FxCompile>
+    <FxCompile Include="shader\font_vs.hlsl">
+      <Filter>Shader\font</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

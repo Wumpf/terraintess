@@ -49,8 +49,8 @@ public:
 		Write(&_content, sizeof(_content));
 	}
 
-	const Buffer& GetContent() const { return _content; }
 	Buffer& GetContent() { return _content; }
+	const Buffer& GetContent() const { return _content; }
 
 private:
 	Buffer _content;
