@@ -15,7 +15,8 @@
 
 #include "BufferObject.h"
 
-Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, unsigned int patchCounterPerBlockSqrt) :
+Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, float detailHeightmapTexcoordFactor, 
+				float heightmapYScale, float detailHeightmapYScale,  unsigned int patchCounterPerBlockSqrt) :
 	_heightmapResolution(heightmapResolution),
 	_totalTerrainSize(totalTerrainSize),
 	_blockVertexCountSqrt(patchCounterPerBlockSqrt + 1),
@@ -66,17 +67,25 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	_patchConstantBuffer.reset(new ConstantBuffer<PatchConstants>());
 	_terrainConstantBuffer.reset(new ConstantBuffer<TerrainConstants>());
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
-	terrainConstants.HeightScale = 300.0f;
-	terrainConstants.HeightmapTexelSize = 1.0f / heightmapResolution;
+
+	terrainConstants.CoarseHeightScale = heightmapYScale;
+	terrainConstants.CoarseHeightmapTexelSize = 1.0f / heightmapResolution;
 	terrainConstants.TrianglesPerClipSpaceUnit = (DeviceManager::Get().GetBackBufferWidth() / _pixelPerTriangle) / 2.0f;
-	terrainConstants.HeightmapTexelSizeWorld_doubled = 2.0f * _totalTerrainSize / heightmapResolution;	// heightmapPixelSizeInWorldCordinates
+	terrainConstants.CoarseHeightmapTexelSizeWorld_doubled = 2.0f * _totalTerrainSize / heightmapResolution;	// heightmapPixelSizeInWorldCordinates
+	
+	terrainConstants.DetailHeightScale = detailHeightmapYScale;
+	terrainConstants.DetailHeightmapTexcoordFactor = detailHeightmapTexcoordFactor;
+	terrainConstants.DetailHeightmapTexelSize = 1.0f / DETAIL_HEIGHTMAP_RESOLUTION;
+	terrainConstants.DetailHeightmapTexelSizeWorld_doubled = terrainConstants.CoarseHeightmapTexelSizeWorld_doubled * detailHeightmapTexcoordFactor;
+
 	_terrainConstantBuffer->UpdateGPUBuffer();
 
 
 
 	// create heightmap
 	PerlinNoiseGenerator noiseGen;
-	_heightmapTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.55f, 8);
+	_heightmapCoarseTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.4f, 8);
+	_heightmapDetailTexture = noiseGen.Generate(DETAIL_HEIGHTMAP_RESOLUTION, DETAIL_HEIGHTMAP_RESOLUTION, 0.5f, 6);
 }
 
 
@@ -146,10 +155,11 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->DSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 	immediateContext->PSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 
-	auto resView = _heightmapTexture->GetShaderResourceView().p;
-	immediateContext->VSSetShaderResources(0, 1, &resView);
-	immediateContext->PSSetShaderResources(0, 1, &resView);
-	immediateContext->DSSetShaderResources(0, 1, &resView);
+	ID3D11ShaderResourceView* heightmapView[] = { _heightmapCoarseTexture->GetShaderResourceView().p, _heightmapDetailTexture->GetShaderResourceView().p };
+	immediateContext->VSSetShaderResources(0, 2, heightmapView);
+	immediateContext->PSSetShaderResources(0, 2, heightmapView);
+	immediateContext->DSSetShaderResources(0, 2, heightmapView);
+
 	_effect->Activate();
 
 

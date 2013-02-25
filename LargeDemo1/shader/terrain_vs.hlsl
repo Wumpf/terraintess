@@ -19,7 +19,12 @@ HS_INPUT main(VS_INPUT input)
     output.WorldPos.xz = input.Pos2D * PlaneScale + WorldPosition;
 
 	output.HeightmapCoord = input.Pos2D * HeightmapTexcoordScale + HeightmapTexcoordPosition;
-	output.WorldPos.y = Heightmap.SampleLevel(SamplerPointWrap, output.HeightmapCoord, 0).r * HeightScale;	// mipmap?
+
+	// HeightmapTexcoordScale seems to be mipmap we want! if its 0 then we have infinite detail, if its one we have zero detail; 
+	// problem: it never gets to 0, only close :/
+	// but looks good so far
+	output.WorldPos.y = CoarseHeightmap.SampleLevel(SamplerPointWrap, output.HeightmapCoord, HeightmapTexcoordScale).r * CoarseHeightScale +
+						DetailHeightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord * DetailHeightmapTexcoordFactor, 0.0f).r * DetailHeightScale;	
 
 	//float4 projectedPos = mul(ViewProjection, float4(output.WorldPos, 1.0f));
 	//output.WorldPosOnScreen = projectedPos.xy / projectedPos.w;

@@ -61,12 +61,12 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 
 	// assume quadratic patches!
 	float3 mid = 0.25f * (ip[0].WorldPos + ip[1].WorldPos + ip[2].WorldPos + ip[3].WorldPos);
-	float edgeLength = ip[1].WorldPos.x - ip[0].WorldPos.x;	// should be positive
-	float diagonalLength = sqrt(2) * edgeLength;
+	float diagonalLength = max(distance(ip[0].WorldPos, ip[2].WorldPos), distance(ip[1].WorldPos, ip[3].WorldPos));	// add offset
 
 	if(InFrustum(mid, diagonalLength))
 	{
 		// estimate size on screen
+		float edgeLength = ip[1].WorldPos.x - ip[0].WorldPos.x;	// should be positive
 		Output.EdgeTessFactor[0] = EstimateSphereSizeAroundEndge(ip[0].WorldPos, ip[3].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
 		Output.EdgeTessFactor[1] = EstimateSphereSizeAroundEndge(ip[1].WorldPos, ip[0].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
 		Output.EdgeTessFactor[2] = EstimateSphereSizeAroundEndge(ip[2].WorldPos, ip[1].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;

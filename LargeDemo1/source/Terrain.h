@@ -6,7 +6,16 @@ template<class T> class ConstantBuffer;
 class Terrain
 {
 public:
-	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float _pixelPerTriangle, unsigned int patchCounterPerBlockSqrt = 8);
+
+	///
+	/// \param totalTerrainSize				total terrain size in world
+	/// \param heightmapResolution			resolution of the coarse heightmap in pixel
+	/// \param detailHeightmapWorldSize		size of the detail heightmap in pixel (resolution is fixed)
+	/// \param heightmapYScale				height-scale of the coarse heightmap
+	/// \param detailHeightmapYScale		height-scale of the detail heightmap
+	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, 
+				float DetailHeightmapTexcoordFactor = 50.0f, float heightmapYScale = 400.0f, float detailHeightmapYScale = 8.0f, 
+				unsigned int patchCounterPerBlockSqrt = 8);
 	~Terrain();
 
 	void Draw(const class Camera& camera, float totalSize);
@@ -21,23 +30,28 @@ private:
 	unsigned int _heightmapResolution;
 	float _totalTerrainSize;
 	float _minimumWorldBlockSize;
-
 	float _pixelPerTriangle;
-
-	bool _wireframe;
-
+	unsigned int _blockVertexCountSqrt;
 
 	std::shared_ptr<BufferObject> _blockVertexBuffer;	// todo rendering without vertex/index buffer
 	std::shared_ptr<BufferObject> _blockIndexBuffer;
 
-	std::shared_ptr<class Texture2D> _heightmapTexture;
+	std::shared_ptr<class Effect> _effect;
+
+	std::shared_ptr<class Texture2D> _heightmapCoarseTexture;
+	std::shared_ptr<class Texture2D> _heightmapDetailTexture;
 
 	struct TerrainConstants
 	{
-		float HeightScale;		// max terrain height
-		float HeightmapTexelSize;
-		float HeightmapTexelSizeWorld_doubled;
+		float CoarseHeightScale;		// max terrain height
+		float CoarseHeightmapTexelSize;
+		float CoarseHeightmapTexelSizeWorld_doubled;
 		float TrianglesPerClipSpaceUnit;
+
+		float DetailHeightScale;
+		float DetailHeightmapTexcoordFactor;
+		float DetailHeightmapTexelSize;
+		float DetailHeightmapTexelSizeWorld_doubled;
 	};
 	std::unique_ptr<ConstantBuffer<TerrainConstants>> _terrainConstantBuffer;
 
@@ -51,8 +65,9 @@ private:
 	};
 	std::unique_ptr<ConstantBuffer<PatchConstants>> _patchConstantBuffer;
 
-	std::shared_ptr<class Effect> _effect;
 
-	unsigned int _blockVertexCountSqrt;
+	bool _wireframe;
+
+	static const unsigned int DETAIL_HEIGHTMAP_RESOLUTION = 512;
 };
 
