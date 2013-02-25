@@ -69,7 +69,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// font
 	_fontRenderer.reset(new FontRenderer());
-	_font0.reset(new FontSheet(L"Arial", 50.0f, FontSheet::FontStyle::Regular));
+	_font0.reset(new FontSheet(L"Arial", 25.0f, FontSheet::FontStyle::Regular));
 
 	return true;
 }
@@ -100,7 +100,7 @@ void Demo::Update(float timeSinceLastUpdate)
 {
 	_camera->Update(timeSinceLastUpdate);
 
-	if(InputManager::Get().WasKeyboardKeyPressed(Key::W))
+	if(InputManager::Get().WasKeyboardKeyPressed(Key::One))
 		_terrain->SetWireframe(!_terrain->GetWireframe());
 }
 
@@ -110,10 +110,13 @@ void Demo::Draw(float timeSinceLastUpdate)
 
 	_camera->UpdateGPUBuffer();
 
-//	_cube->Draw(*_camera, _passedTimeSinceStart);
-//	_terrain->Draw(*_camera, 100.0f);
+	_cube->Draw(*_camera, _passedTimeSinceStart);
+	_terrain->Draw(*_camera, 100.0f);
 
-	_fontRenderer->DrawString(*_font0, "ich hab meinen schatz lieb :3", SimpleMath::Vector2(50.0f));
+	// perf stats
+	char perf[512];
+	sprintf_s(perf, "fps: %.2f\nms: %.3f", 1.0f / timeSinceLastUpdate, timeSinceLastUpdate * 1000.0f);
+	_fontRenderer->DrawString(*_font0, perf, SimpleMath::Vector2(20.0f));
 
 	DeviceManager::Get().GetSwapChain()->Present(0, 0);
 }

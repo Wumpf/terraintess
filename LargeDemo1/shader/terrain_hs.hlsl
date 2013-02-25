@@ -34,17 +34,17 @@ bool InFrustum(const float3 p, const float margin)
 		return true;
 
 	float3 projectedToCameraViewDir = CameraZ * dot(cameraToPoint, CameraZ);
-	float3 pointToProjectedToCameraViewDir = normalize(projectedToCameraViewDir - cameraToPoint);	// direction to point projected onto cameradirection
+	float3 pointToCameraViewDir = projectedToCameraViewDir - cameraToPoint;	// direction to point projected onto cameradirection
+	float pointToCameraViewDir_length = length(pointToCameraViewDir);
+	pointToCameraViewDir /= pointToCameraViewDir_length;
 
 	// that is now the point nearest to the camera direction ("most visible")
-	float3 realignedPoint = p + pointToProjectedToCameraViewDir * min(margin, length(pointToProjectedToCameraViewDir));
-	float4 realignedPoint_projected = mul(ViewProjection, float4(realignedPoint, 1.0));
-	float3 realignedPoint_clipSpace = realignedPoint_projected.xyz / realignedPoint_projected.w;
+	float3 realignedPoint = p + pointToCameraViewDir * min(margin, pointToCameraViewDir_length);
+	float4 realignedPoint_projected = mul(ViewProjection, float4(realignedPoint, 1.0f));
 
-	if(realignedPoint_clipSpace.x < -1.0f || realignedPoint_clipSpace.x > 1.0f ||
-	   realignedPoint_clipSpace.y < -1.0f || realignedPoint_clipSpace.y > 1.0f ||
-	   realignedPoint_clipSpace.z < 0.0f || realignedPoint_clipSpace.z > 1.0f || 
-	   realignedPoint_projected.w < 0.0f)
+	if(realignedPoint_projected.x < -realignedPoint_projected.w || realignedPoint_projected.x > realignedPoint_projected.w ||
+	   realignedPoint_projected.y < -realignedPoint_projected.w || realignedPoint_projected.y > realignedPoint_projected.w ||
+		realignedPoint_projected.z < 0.0f || realignedPoint_projected.z > realignedPoint_projected.w)
 	{
 		return false;
 	}

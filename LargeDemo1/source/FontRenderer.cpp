@@ -108,6 +108,6 @@ void FontRenderer::DrawString(class FontSheet& fontSheet, const std::string text
 	}
 
 	// reset states
-	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
+	DeviceManager::Get().SetRasterizerState(RasterizerState::CullBack);
 	DeviceManager::Get().SetBlendState(BlendState::Opaque);
 }
