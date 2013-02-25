@@ -25,6 +25,7 @@ public:
 
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
+	void SetBlendState(class BlendState& state, const SimpleMath::Vector4 blendFactor = SimpleMath::Vector4(1.0f), UINT sampleMask = 0xffffffff); 
 	void SetSamplerState(class SamplerState& state, unsigned int slot = 0);
 	void SetSamplerState(class SamplerState& state, Shader::Type shaderType, unsigned int slot = 0);	// not const, since a state object may be created
 	void SetSamplerStates(SamplerState* states, unsigned int numStates, Shader::Type shaderType, unsigned int startSlot = 0);

@@ -110,6 +110,9 @@
     <ClInclude Include="source\FontSheet.h">
       <Filter>Code Files\font</Filter>
     </ClInclude>
+    <ClInclude Include="source\BlendState.h">
+      <Filter>Code Files\rendering core\state objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LargeDemo1.rc">
@@ -193,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="source\FontRenderer.cpp">
       <Filter>Code Files\font</Filter>
+    </ClCompile>
+    <ClCompile Include="source\BlendState.cpp">
+      <Filter>Code Files\rendering core\state objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

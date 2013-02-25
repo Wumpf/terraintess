@@ -4,7 +4,7 @@
 
 #include "RasterizerState.h"
 #include "SamplerState.h"
-
+#include "BlendState.h"
 
 DeviceManager::DeviceManager() :
 	_initialized(false),
@@ -206,6 +206,14 @@ void DeviceManager::SetRasterizerState(RasterizerState& state)
 		_device->CreateRasterizerState(&state._desc, &state._stateObject.p);
 
 	_immediateContext->RSSetState(state._stateObject.p);
+}
+
+void DeviceManager::SetBlendState(class BlendState& state, const SimpleMath::Vector4 blendFactor, UINT sampleMask)
+{
+	if(state._stateObject == nullptr)
+		_device->CreateBlendState(&state._desc, &state._stateObject.p);
+
+	_immediateContext->OMSetBlendState(state._stateObject.p, blendFactor, sampleMask);
 }
 
 void DeviceManager::SetSamplerState(class SamplerState& state, Shader::Type shaderType, unsigned int slot)

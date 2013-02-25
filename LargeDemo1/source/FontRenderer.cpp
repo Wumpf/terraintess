@@ -5,6 +5,7 @@
 #include "FontSheet.h"
 #include "DeviceManager.h"
 #include "RasterizerState.h"
+#include "BlendState.h"
 #include "Texture.h"
 
 const D3D11_INPUT_ELEMENT_DESC FontRenderer::CharacterVertex::desc[] =
@@ -42,7 +43,10 @@ void FontRenderer::DrawString(class FontSheet& fontSheet, const std::string text
     UINT offset = 0;
 	context->IASetVertexBuffers(0, 1, _fontVertexBuffer->GetBufferPointer(), &stride, &offset);
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	
 	DeviceManager::Get().SetRasterizerState(RasterizerState::CullNone);
+	DeviceManager::Get().SetBlendState(BlendState::AlphaBlend);
+
 	auto resView = fontSheet.GetFontTexture()->GetShaderResourceView().p;
 	context->PSSetShaderResources(0, 1, &resView);
 
@@ -102,4 +106,8 @@ void FontRenderer::DrawString(class FontSheet& fontSheet, const std::string text
 		// draw
 		DeviceManager::Get().GetContext()->Draw(vertexIndex, 0);
 	}
+
+	// reset states
+	DeviceManager::Get().SetRasterizerState(RasterizerState::CullFront);
+	DeviceManager::Get().SetBlendState(BlendState::Opaque);
 }

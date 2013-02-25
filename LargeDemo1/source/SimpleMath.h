@@ -47,6 +47,7 @@ struct Vector2 : public XMFLOAT2
     Vector2(FXMVECTOR V) { XMStoreFloat2( this, V ); }
 
     operator XMVECTOR() const { return XMLoadFloat2( this ); }
+	operator const float*() const { return &x; }
 
     // Comparision operators
     bool operator == ( const Vector2& V ) const;
@@ -145,6 +146,7 @@ struct Vector3 : public XMFLOAT3
     Vector3(FXMVECTOR V) { XMStoreFloat3( this, V ); }
 
     operator XMVECTOR() const { return XMLoadFloat3( this ); }
+	operator const float*() const { return &x; }
 
     // Comparision operators
     bool operator == ( const Vector3& V ) const;
@@ -243,6 +245,7 @@ struct Vector4 : public XMFLOAT4
     Vector4(FXMVECTOR V) { XMStoreFloat4( this, V ); }
 
     operator XMVECTOR() const { return XMLoadFloat4( this ); }
+	operator const float*() const { return &x; }
 
     // Comparision operators
     bool operator == ( const Vector4& V ) const;

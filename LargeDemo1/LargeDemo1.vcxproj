@@ -177,6 +177,7 @@
     <ClInclude Include="source\PerlinNoiseGenerator.h" />
     <ClInclude Include="source\RasterizerState.h" />
     <ClInclude Include="source\Resource.h" />
+    <ClInclude Include="source\BlendState.h" />
     <ClInclude Include="source\SamplerState.h" />
     <ClInclude Include="source\Shader.h" />
     <ClInclude Include="source\SimpleMath.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\PerlinNoiseGenerator.cpp" />
     <ClCompile Include="source\RasterizerState.cpp" />
+    <ClCompile Include="source\BlendState.cpp" />
     <ClCompile Include="source\SamplerState.cpp" />
     <ClCompile Include="source\Shader.cpp" />
     <ClCompile Include="source\stdafx.cpp">
