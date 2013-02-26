@@ -96,7 +96,7 @@ Terrain::~Terrain()
 void Terrain::OnBackBufferResize(unsigned int height, unsigned int width)
 {
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
-	terrainConstants.TrianglesPerClipSpaceUnit = 2.0f / DeviceManager::Get().GetBackBufferWidth() / _pixelPerTriangle;
+	terrainConstants.TrianglesPerClipSpaceUnit = width / _pixelPerTriangle / 2.0f;
 	_terrainConstantBuffer->UpdateGPUBuffer();
 }
 

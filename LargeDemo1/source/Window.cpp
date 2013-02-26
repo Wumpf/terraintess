@@ -12,7 +12,8 @@ Window::~Window(void)
 {
 }
 
-LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+Window* __window;
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PAINTSTRUCT ps;
     HDC hdc;
@@ -30,6 +31,16 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_DESTROY:
             PostQuitMessage( 0 );
             break;
+
+		case WM_SIZE:
+			if(__window)
+			{
+				unsigned int newWidth = LOWORD(lParam);
+				unsigned int newHeight = HIWORD(lParam);
+				for(auto it : __window->_windowResizeCallbacks)
+					it.second(newWidth, newHeight);
+			}
+			break;
 
 		default:
 			if(!alreadyProcessed)
@@ -77,6 +88,7 @@ bool Window::InitWindow(HINSTANCE hInstance, const std::wstring& caption, unsign
 
 bool Window::MessagePump()
 {
+	__window = this;
 	InputManager::Get().UpdatePressedReleaseTables();
 	MSG msg = {0};
 	while(PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
@@ -89,4 +101,14 @@ bool Window::MessagePump()
 	}
 
 	return true;
+}
+
+void Window::RegisterWindowResizeCallback(const std::string& identifier, const std::function<void(unsigned int, unsigned int)>& callback)
+{
+	_windowResizeCallbacks.insert(std::pair<const std::string, std::function<void(unsigned int, unsigned int)>>(identifier, callback));
+}
+
+void Window::UnregisterWindowResizeCallback(const std::string& identifier)
+{
+	_windowResizeCallbacks.erase(identifier);
 }

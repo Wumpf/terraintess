@@ -19,10 +19,6 @@ public:
 
 	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
 
-	// backbuffer resize observer
-	void RegisterBackBufferResizeCallback(const std::string& identifier, const std::function<void(unsigned int, unsigned int)>& callback);
-	void UnregisterBackBufferResizeCallback(const std::string& identifier);
-
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
 	void SetBlendState(class BlendState& state, const SimpleMath::Vector4 blendFactor = SimpleMath::Vector4(1.0f), UINT sampleMask = 0xffffffff); 
@@ -63,6 +59,4 @@ private:
 	DXGI_SAMPLE_DESC _samplingSettings;
 
 	D3D11_VIEWPORT _backBufferViewport;
-
-	std::unordered_map<std::string, std::function<void(unsigned int, unsigned int)>> _backBufferResizeCallbacks;
 };

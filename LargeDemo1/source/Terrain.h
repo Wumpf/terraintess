@@ -23,8 +23,9 @@ public:
 	void SetWireframe(bool wireframe) { _wireframe = wireframe; }
 	bool GetWireframe() const { return _wireframe; }
 
-private:
 	void OnBackBufferResize(unsigned int height, unsigned int width);
+
+private:
 	void DrawRecursive(const SimpleMath::Vector2& min, const SimpleMath::Vector2& max, const SimpleMath::Vector2& cameraPos2D);
 
 	unsigned int _heightmapResolution;

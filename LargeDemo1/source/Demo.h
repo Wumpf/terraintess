@@ -16,6 +16,8 @@ public:
 	void Draw(float timeSinceLastUpdate);
 	void Update(float timeSinceLastUpdate);
 
+	void UpdateScreenConstantBuffer(unsigned int width, unsigned int height);
+
 private:
 	static const unsigned int CONSTANT_BUFFER_INDEX_CAMERA = 5;
 	static const unsigned int CONSTANT_BUFFER_INDEX_SCREEN = 6;

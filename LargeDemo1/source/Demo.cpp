@@ -43,10 +43,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// screen constants
 	_screenConstants.reset(new ConstantBuffer<ScreenConstants>());
-	_screenConstants->GetContent().ScreenSize.x = static_cast<float>(DeviceManager::Get().GetBackBufferWidth());
-	_screenConstants->GetContent().ScreenSize.y = static_cast<float>(DeviceManager::Get().GetBackBufferHeight());
-	_screenConstants->GetContent().AspectRatio = _screenConstants->GetContent().ScreenSize.x / _screenConstants->GetContent().ScreenSize.y;
-	_screenConstants->UpdateGPUBuffer();
+
 	DeviceManager::Get().GetContext()->CSSetConstantBuffers(CONSTANT_BUFFER_INDEX_SCREEN, 1, _screenConstants->GetBufferPointer());
 	DeviceManager::Get().GetContext()->GSSetConstantBuffers(CONSTANT_BUFFER_INDEX_SCREEN, 1, _screenConstants->GetBufferPointer());
 	DeviceManager::Get().GetContext()->PSSetConstantBuffers(CONSTANT_BUFFER_INDEX_SCREEN, 1, _screenConstants->GetBufferPointer());
@@ -62,7 +59,6 @@ bool Demo::Initialize(HINSTANCE hInstance)
 	DeviceManager::Get().SetSamplerState(SamplerState::AnisotropicWrap, 4);
 	DeviceManager::Get().SetSamplerState(SamplerState::AnisotropicClamp, 5);
 
-
 	// objects
 	_cube.reset(new Cube());
 	_terrain.reset(new Terrain(2048*2, 2048, 8));
@@ -71,7 +67,21 @@ bool Demo::Initialize(HINSTANCE hInstance)
 	_fontRenderer.reset(new FontRenderer());
 	_font0.reset(new FontSheet(L"Arial", 25.0f, FontSheet::FontStyle::Regular));
 
+	// resize callbacks
+	_window->RegisterWindowResizeCallback("graphicsdevice", [&](unsigned int, unsigned int) 
+					{DeviceManager::Get().CreateSwapChainAndBackBuffer(_window->GetHandle(), DeviceManager::Get().GetAvailableMultisamplingSettings().back());});
+	_window->RegisterWindowResizeCallback("terrain", std::bind(&Terrain::OnBackBufferResize, _terrain.get(), std::placeholders::_1, std::placeholders::_2)); 
+	_window->RegisterWindowResizeCallback("screenconstantbuffer", std::bind(&Demo::UpdateScreenConstantBuffer, this, std::placeholders::_1, std::placeholders::_2)); 
+
 	return true;
+}
+
+void Demo::UpdateScreenConstantBuffer(unsigned int width, unsigned int height)
+{
+	_screenConstants->GetContent().ScreenSize.x = static_cast<float>(width);
+	_screenConstants->GetContent().ScreenSize.y = static_cast<float>(height);
+	_screenConstants->GetContent().AspectRatio = width / height;
+	_screenConstants->UpdateGPUBuffer();
 }
 
 void Demo::RunMainLoop()
@@ -84,7 +94,6 @@ void Demo::RunMainLoop()
 		lastFrameLength = timer.GetTimeSeconds();
 		_passedTimeSinceStart += lastFrameLength;
 		timer.Reset();
-
 
 		if(!_window->MessagePump())
 			break;
