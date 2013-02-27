@@ -10,8 +10,9 @@ struct HS_CONSTANT_DATA_OUTPUT
 // Output control point
 struct HS_OUTPUT
 {
-	float3 WorldPos : POSITION;
+	float2 WorldPos2D : POSITION;
 	float2 HeightmapCoord : TEXCOORD0;
+	float SkirtFactor : SKIRT;
 };
 
 
@@ -95,8 +96,9 @@ HS_OUTPUT main(InputPatch<HS_INPUT, NUM_CONTROL_POINTS> ip, uint i : SV_OutputCo
 {
 	HS_OUTPUT Output;
 
-	Output.WorldPos = ip[i].WorldPos;
+	Output.WorldPos2D = ip[i].WorldPos.xz;
 	Output.HeightmapCoord = ip[i].HeightmapCoord;
+	Output.SkirtFactor = ip[i].SkirtFactor;
 
 	return Output;
 }

@@ -15,7 +15,7 @@ DS_OUTPUT main(HS_CONSTANT_DATA_OUTPUT input, float2 domain : SV_DomainLocation,
 {
 	DS_OUTPUT output;
 
-	output.WorldPos = Bilerp(patch[0].WorldPos, patch[1].WorldPos, patch[2].WorldPos, patch[3].WorldPos, domain);
+	output.WorldPos.xz = Bilerp(patch[0].WorldPos2D, patch[1].WorldPos2D, patch[2].WorldPos2D, patch[3].WorldPos2D, domain);
 	output.HeightmapCoord = Bilerp(patch[0].HeightmapCoord, patch[1].HeightmapCoord, patch[2].HeightmapCoord, patch[3].HeightmapCoord, domain);
 
 
@@ -32,8 +32,9 @@ DS_OUTPUT main(HS_CONSTANT_DATA_OUTPUT input, float2 domain : SV_DomainLocation,
 
 
 	// mipmap HeightmapTexcoordScale / input.InsideTessFactor[0] ? 
-	output.WorldPos.y = CoarseHeightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord, 0.0f).r * CoarseHeightScale +
-						DetailHeightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord * DetailHeightmapTexcoordFactor, 0.0f).r * DetailHeightScale;
+	output.WorldPos.y = CoarseHeightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord, 0.0f).r * CoarseHeightScale;
+	output.WorldPos.y += DetailHeightmap.SampleLevel(SamplerTriLinearWrap, output.HeightmapCoord * DetailHeightmapTexcoordFactor, 0.0f).r * DetailHeightScale;
+	output.WorldPos.y -= Bilerp(patch[0].SkirtFactor, patch[1].SkirtFactor, patch[2].SkirtFactor, patch[3].SkirtFactor, domain);
 
 
 	/**float4 h; 

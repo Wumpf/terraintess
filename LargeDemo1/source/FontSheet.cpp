@@ -169,7 +169,6 @@ int FontSheet::GetCharMaxX(Gdiplus::Bitmap& charBitmap)
 			}
 		}
 	}
-
 	return width-1;
 }
 

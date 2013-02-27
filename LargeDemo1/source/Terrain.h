@@ -15,7 +15,7 @@ public:
 	/// \param detailHeightmapYScale		height-scale of the detail heightmap
 	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, 
 				float DetailHeightmapTexcoordFactor = 50.0f, float heightmapYScale = 400.0f, float detailHeightmapYScale = 8.0f, 
-				unsigned int patchCounterPerBlockSqrt = 8);
+				unsigned int patchCountPerBlockSqrt = 8);
 	~Terrain();
 
 	void Draw(const class Camera& camera, float totalSize);
@@ -32,7 +32,6 @@ private:
 	float _totalTerrainSize;
 	float _minimumWorldBlockSize;
 	float _pixelPerTriangle;
-	unsigned int _blockVertexCountSqrt;
 
 	std::shared_ptr<BufferObject> _blockVertexBuffer;	// todo rendering without vertex/index buffer
 	std::shared_ptr<BufferObject> _blockIndexBuffer;

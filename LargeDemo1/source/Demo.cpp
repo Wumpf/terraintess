@@ -43,6 +43,7 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// screen constants
 	_screenConstants.reset(new ConstantBuffer<ScreenConstants>());
+	UpdateScreenConstantBuffer(DeviceManager::Get().GetBackBufferWidth(), DeviceManager::Get().GetBackBufferHeight());
 
 	DeviceManager::Get().GetContext()->CSSetConstantBuffers(CONSTANT_BUFFER_INDEX_SCREEN, 1, _screenConstants->GetBufferPointer());
 	DeviceManager::Get().GetContext()->GSSetConstantBuffers(CONSTANT_BUFFER_INDEX_SCREEN, 1, _screenConstants->GetBufferPointer());
@@ -80,7 +81,7 @@ void Demo::UpdateScreenConstantBuffer(unsigned int width, unsigned int height)
 {
 	_screenConstants->GetContent().ScreenSize.x = static_cast<float>(width);
 	_screenConstants->GetContent().ScreenSize.y = static_cast<float>(height);
-	_screenConstants->GetContent().AspectRatio = width / height;
+	_screenConstants->GetContent().AspectRatio = _screenConstants->GetContent().ScreenSize.x / _screenConstants->GetContent().ScreenSize.y;
 	_screenConstants->UpdateGPUBuffer();
 }
 

@@ -1,3 +1,9 @@
+// original from here 
+// http://blogs.msdn.com/b/shawnhar/archive/2013/01/08/simplemath-a-simplified-wrapper-for-directxmath.aspx
+// modification:
+// - additional convenience constructors
+// - removed namespace DirectX
+
 //-------------------------------------------------------------------------------------
 // SimpleMath.h -- Simplified C++ Math wrapper for DirectXMath
 //
@@ -24,10 +30,12 @@
 #include "DirectXPackedVector.h"
 #include "DirectXCollision.h"
 
-using namespace DirectX;
 
 namespace SimpleMath
 {
+
+using namespace DirectX;
+
     
 struct Vector4;
 struct Matrix;
