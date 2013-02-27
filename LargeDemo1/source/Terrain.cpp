@@ -43,112 +43,44 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	assert(patchCountPerBlockSqrt >= 1);
 
 	// Create vertex buffer
-	unsigned int numMainVerticesSqrt = patchCountPerBlockSqrt+1;
-	unsigned int numMainVertices = (patchCountPerBlockSqrt+1)*(patchCountPerBlockSqrt+1);
-	unsigned int numVertices = numMainVertices + (patchCountPerBlockSqrt+1) * 1;
+	int numVerticesSqrt = patchCountPerBlockSqrt+3;
+	int numVertices = numVerticesSqrt*numVerticesSqrt;
 	assert(numVertices < 0xFFFF);
 	std::unique_ptr<TerrainVertex[]> vertices(new TerrainVertex[numVertices]);
 	// main vertices
 	TerrainVertex* vertex = vertices.get();
-	for(unsigned int y=0; y<patchCountPerBlockSqrt+1; ++y)
+	for(int y=0; y<numVerticesSqrt; ++y)
 	{
-		for(unsigned int x=0; x<patchCountPerBlockSqrt+1; ++x)
+		for(int x=0; x<numVerticesSqrt; ++x)
 		{
-			vertex->pos2D.x = static_cast<float>(x) / patchCountPerBlockSqrt;
-			vertex->pos2D.y = static_cast<float>(y) / patchCountPerBlockSqrt;
-			vertex->skirtFactor = 0.0f;
+			vertex->pos2D.x = Utils::Clamp(static_cast<float>(x-1) / patchCountPerBlockSqrt, 0.0f, 1.0f);
+			vertex->pos2D.y = Utils::Clamp(static_cast<float>(y-1) / patchCountPerBlockSqrt, 0.0f, 1.0f);
+
+			if(x==0 || x==numVerticesSqrt-1 || y==0 || y==numVerticesSqrt-1)
+				vertex->skirtFactor = detailHeightmapYScale;
+			else
+				vertex->skirtFactor = 0.0f;
 			++vertex;
 		}
 	}
-	// skirt vertices
-	float skirtFactor = detailHeightmapYScale * 0.25f;
-		// top
-	for(unsigned int i=0; i<patchCountPerBlockSqrt+1; ++i)
-	{
-		vertex->pos2D.x = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->pos2D.y = 0.0f;
-		vertex->skirtFactor = skirtFactor;
-		++vertex;
-	}
-		// left
-/*		for(unsigned int i=0; i<patchCountPerBlockSqrt+1; ++i)
-	{
-		vertex->pos2D.x = 1.0f;
-		vertex->pos2D.y = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->skirtFactor = 1.0f;
-		++vertex;
-	}
-		// bottom
-for(unsigned int i=0; i<patchCountPerBlockSqrt+1; ++i)
-	{
-		vertex->pos2D.x = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->pos2D.y = 1.0f;
-		vertex->skirtFactor = 1.0f;
-		++vertex;
-	}
-		// right
-	for(unsigned int i=0; i<patchCountPerBlockSqrt+1; ++i)
-	{
-		vertex->pos2D.x = 0.0f;
-		vertex->pos2D.y = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->skirtFactor = 1.0f;
-		++vertex;
-	}*/
-
 	_blockVertexBuffer.reset(new BufferObject(vertices.get(), numVertices, sizeof(TerrainVertex), D3D11_BIND_VERTEX_BUFFER));
 
     // Create index buffer
-	unsigned int numIndices = (patchCountPerBlockSqrt*patchCountPerBlockSqrt + patchCountPerBlockSqrt * 1) * 4;
+	unsigned int numIndices = ((numVerticesSqrt-1)*(numVerticesSqrt-1)) * 4;
     std::unique_ptr<WORD> indices(new WORD[numIndices]);
 	// main quads
 	WORD* index = indices.get();
-	for(unsigned int y=0; y<patchCountPerBlockSqrt; ++y)
+	for(int y=0; y<(numVerticesSqrt-1); ++y)
 	{
-		for(unsigned int x=0; x<patchCountPerBlockSqrt; ++x)
+		for(int x=0; x<(numVerticesSqrt-1); ++x)
 		{
-			index[0] = x + y * (patchCountPerBlockSqrt+1);
+			index[0] = x + y * numVerticesSqrt;
 			index[1] = index[0] + 1;
-			index[2] = index[1] + (patchCountPerBlockSqrt+1);
-			index[3] = index[0] + (patchCountPerBlockSqrt+1);
+			index[2] = index[1] + numVerticesSqrt;
+			index[3] = index[0] + numVerticesSqrt;
 			index += 4;
 		}
 	}
-	// skirt quads
-	unsigned int skirtVertexIndex = numMainVertices;
-		// top
-	for(unsigned int i=0; i<patchCountPerBlockSqrt; ++i)
-	{
-		index[0] = skirtVertexIndex++;
-		index[1] = index[0] + 1;
-		index[2] = i+1;
-		index[3] = i;
-		index += 4;
-	}
-/*		// left
-	for(unsigned int i=0; i<patchCountPerBlockSqrt; ++i)
-	{
-		index[0] = numMainVerticesSqrt * (i+1);
-		index[1] = skirtVertexIndex++;
-		index[2] = skirtVertexIndex;
-		index[3] = index[0] + numMainVerticesSqrt;
-		index += 4;
-	}
-		// bottom
-	for(unsigned int i=0; i<patchCountPerBlockSqrt; ++i)
-	{
-		vertex->pos2D.x = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->pos2D.y = 1.0f;
-		vertex->skirtFactor = 0.0f;
-		++vertex;
-	}
-		// right
-	for(unsigned int i=0; i<patchCountPerBlockSqrt; ++i)
-	{
-		vertex->pos2D.x = 0.0f;
-		vertex->pos2D.y = static_cast<float>(i) / patchCountPerBlockSqrt;
-		vertex->skirtFactor = 0.0f;
-		++vertex;
-	}*/
 	_blockIndexBuffer.reset(new BufferObject(indices.get(), numIndices, sizeof(WORD), D3D11_BIND_INDEX_BUFFER));
 
     // Create the constant buffers
@@ -250,7 +182,7 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 
 	_effect->Activate();
 
-
+	DeviceManager::Get().SetRasterizerState(RasterizerState::CullNone);
 	if(_wireframe)
 		DeviceManager::Get().SetRasterizerState(RasterizerState::WireframeFrontOnly);
 	DrawRecursive(SimpleMath::Vector2(-_totalTerrainSize*0.5f), SimpleMath::Vector2(_totalTerrainSize*0.5f), SimpleMath::Vector2(camera.GetPosition().x, camera.GetPosition().z));

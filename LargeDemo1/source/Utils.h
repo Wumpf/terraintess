@@ -18,6 +18,15 @@ namespace Utils
 	template<class T> T RadToDeg(T rad) { return rad * static_cast<T>(180.0 / pi); }
 	template<class T> T DegToRad(T deg) { return deg * static_cast<T>(pi / 180.0); }
 
+	template<class T> T Clamp(T value, T min, T max)
+	{
+		if(value < min)
+			return min;
+		else if(value > max)
+			return max;
+		else
+			return value;
+	}
 
 	void InitRandom(uint32_t seed);
 	uint32_t Random();

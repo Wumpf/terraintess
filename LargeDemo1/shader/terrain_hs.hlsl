@@ -18,8 +18,9 @@ struct HS_OUTPUT
 
 #define NUM_CONTROL_POINTS 4
 
-float EstimateSphereSizeAroundEndge(const float3 p0, const float3 p1, float edgeLength)
+float EstimateSphereSizeAroundEndge(const float3 p0, const float3 p1)
 {
+	float edgeLength = distance(p0, p1);
 	float3 edgeMid = (p1 + p0) * 0.5f;
 	float2 edgeMidProjected = mul(ViewProjection, float4(edgeMid, 1.0f)).xw;
 	float2 edgeUpProjected = mul(ViewProjection, float4(edgeMid + CameraX * edgeLength, 1.0f)).xw; 
@@ -66,17 +67,26 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 
 	if(InFrustum(mid, diagonalLength))
 	{
-		// estimate size on screen
-		float edgeLength = ip[1].WorldPos.x - ip[0].WorldPos.x;	// should be positive
-		Output.EdgeTessFactor[0] = EstimateSphereSizeAroundEndge(ip[0].WorldPos, ip[3].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
-		Output.EdgeTessFactor[1] = EstimateSphereSizeAroundEndge(ip[1].WorldPos, ip[0].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
-		Output.EdgeTessFactor[2] = EstimateSphereSizeAroundEndge(ip[2].WorldPos, ip[1].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
-		Output.EdgeTessFactor[3] = EstimateSphereSizeAroundEndge(ip[3].WorldPos, ip[2].WorldPos, edgeLength) * TrianglesPerClipSpaceUnit;
+		Output.InsideTessFactor[0] = 0.0f;
+		bool anySkirt = false;
 
-		//Output.EdgeTessFactor[0] = Output.EdgeTessFactor[1] = Output.EdgeTessFactor[2] = Output.EdgeTessFactor[3] = 1;
+		[unroll]for(int i=0; i<4; ++i)
+		{
+			int second = (i+3) % 4;
 
-		float midTess = (Output.EdgeTessFactor[0] + Output.EdgeTessFactor[1] + Output.EdgeTessFactor[2] + Output.EdgeTessFactor[3]) * 0.25f;
-		Output.InsideTessFactor[0] = Output.InsideTessFactor[1] = midTess;
+			if(ip[i].SkirtFactor > 0.0001f || ip[second].SkirtFactor > 0.0001f)
+			{
+				Output.EdgeTessFactor[i] = 1.0f;
+				anySkirt = true;
+			}
+			else
+				Output.EdgeTessFactor[i] = EstimateSphereSizeAroundEndge(ip[i].WorldPos, ip[second].WorldPos) * TrianglesPerClipSpaceUnit;
+		}
+		if(anySkirt)
+			Output.InsideTessFactor[1] = 1.0f;
+		else
+			Output.InsideTessFactor[1] = (Output.EdgeTessFactor[0]+Output.EdgeTessFactor[1]+Output.EdgeTessFactor[2]+Output.EdgeTessFactor[3]) * 0.25f;
+		Output.InsideTessFactor[0] = Output.InsideTessFactor[1];
 	}
 	else
 	{
