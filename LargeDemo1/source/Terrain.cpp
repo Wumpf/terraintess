@@ -181,7 +181,7 @@ Terrain::~Terrain()
 {
 }
 
-void Terrain::OnBackBufferResize(unsigned int height, unsigned int width)
+void Terrain::OnBackBufferResize(unsigned int width, unsigned int height)
 {
 	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
 	terrainConstants.TrianglesPerClipSpaceUnit = width / _pixelPerTriangle / 2.0f;
