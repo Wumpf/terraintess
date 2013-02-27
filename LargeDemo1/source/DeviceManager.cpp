@@ -72,7 +72,7 @@ bool DeviceManager::InitDevice(D3D11_CREATE_DEVICE_FLAG deviceFlags)
 	// feature levels by priority
     D3D_FEATURE_LEVEL featureLevels[] =
     {
-		D3D_FEATURE_LEVEL_11_1,
+	//	D3D_FEATURE_LEVEL_11_1,
         D3D_FEATURE_LEVEL_11_0,
         D3D_FEATURE_LEVEL_10_1,
         D3D_FEATURE_LEVEL_10_0,
@@ -113,16 +113,16 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
     _backBufferHeight = rc.bottom - rc.top;
 
 	// query dxgi factory
-	CComPtr<IDXGIDevice2> dxgiDevice;
-	_device->QueryInterface(__uuidof(IDXGIDevice2), (void **)&dxgiDevice);
-	dxgiDevice->SetMaximumFrameLatency(1);
+	CComPtr<IDXGIDevice> dxgiDevice; // IDXGIDevice2 didn't work in win7
+	_device->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice);
+	//dxgiDevice->SetMaximumFrameLatency(1);
 	CComPtr<IDXGIAdapter> dxgiAdapter;
 	dxgiDevice->GetAdapter(&dxgiAdapter);
-	CComPtr<IDXGIFactory2> dxgiFactory;
+	CComPtr<IDXGIFactory> dxgiFactory; // IDXGIDevice2 didn't work in win7
 	dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
 
 	// create swap chain
-    DXGI_SWAP_CHAIN_DESC1 sd;
+  /*  DXGI_SWAP_CHAIN_DESC1 sd;
     sd.BufferCount = 1;
     sd.Width = _backBufferWidth;
     sd.Height = _backBufferHeight;
@@ -137,6 +137,24 @@ bool DeviceManager::CreateSwapChainAndBackBuffer(HWND windowHandle, const DXGI_S
 	sd.Flags = 0;
 	sd.SampleDesc = multisamplingSettings;
 	hr = dxgiFactory->CreateSwapChainForHwnd(_device, windowHandle, &sd, nullptr, nullptr, &_swapChain);
+	if(FAILED(hr))
+		return false;*/
+
+	DXGI_SWAP_CHAIN_DESC sd;
+	memset( &sd, 0, sizeof(sd) );
+    sd.BufferCount = 1;
+	sd.BufferDesc.Width = _backBufferWidth;
+	sd.BufferDesc.Height = _backBufferHeight;
+	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	sd.BufferDesc.RefreshRate.Numerator = 0;
+	sd.BufferDesc.RefreshRate.Denominator = 1;
+	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	sd.OutputWindow = windowHandle;
+	// Enable multisampling
+	sd.SampleDesc = multisamplingSettings;
+	sd.Windowed = true;
+	sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	hr = dxgiFactory->CreateSwapChain(_device, &sd, &_swapChain);
 	if(FAILED(hr))
 		return false;
 

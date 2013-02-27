@@ -27,7 +27,7 @@ public:
 	void SetSamplerStates(SamplerState* states, unsigned int numStates, Shader::Type shaderType, unsigned int startSlot = 0);
 
 	// getter
-	IDXGISwapChain1* GetSwapChain()			{ return _swapChain; }
+	IDXGISwapChain* GetSwapChain()			{ return _swapChain; }
 	ID3D11Device* GetDevice()				{ return _device; }
 	ID3D11DeviceContext* GetContext()		{ return _immediateContext; }
 
@@ -41,7 +41,7 @@ private:
 
 	bool _initialized;
 
-	IDXGISwapChain1* _swapChain;
+	IDXGISwapChain* _swapChain;		// IDXGISwapChain1
 	ID3D11Device* _device;
 	ID3D11DeviceContext* _immediateContext;
 
