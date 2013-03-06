@@ -62,7 +62,12 @@ bool Demo::Initialize(HINSTANCE hInstance)
 
 	// objects
 	_cube.reset(new Cube());
-	_terrain.reset(new Terrain(2048*2, 2048, 8));
+	_terrain.reset(new Terrain(2048*2, 2048, 8, 40.0f));
+	_terrain->SetupTextures("textures/grass.bmp", "textures/grassbump.bmp",
+							"textures/sand.jpg", "textures/sandbump.jpg", 
+							"textures/rock.bmp", "textures/rockbump.bmp", 
+							"textures/snow.bmp", "textures/snowbump.bmp", 0.05f);
+
 
 	// font
 	_fontRenderer.reset(new FontRenderer());

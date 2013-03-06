@@ -50,8 +50,8 @@ bool InFrustum(const float3 p, const float margin)
 	{
 		return false;
 	}
-	else
-		return true;
+	
+	return true;
 };
 
 // Patch Constant Function

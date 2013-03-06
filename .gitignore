@@ -20,7 +20,11 @@
 /LargeDemo1/x64
 /LargeDemo1/Debug
 
-/build
 /*.opensdf
 
 /*.suo
+
+*.exe
+*.pdb
+*.ilk
+*.cso

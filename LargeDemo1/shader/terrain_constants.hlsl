@@ -9,6 +9,8 @@ cbuffer TerrainConstants : register(b0)
 	float DetailHeightmapTexcoordFactor			: packoffset(c1.y);
 	float DetailHeightmapTexelSize				: packoffset(c1.z);	
 	float DetailHeightmapTexelSizeWorld_doubled	: packoffset(c1.w);	// size of a texel in worldcoordinates doubled
+
+	float TextureRepeat : packoffset(c2.x);
 }
 
 cbuffer PatchConstants : register(b1)
@@ -22,3 +24,6 @@ cbuffer PatchConstants : register(b1)
 
 Texture2D CoarseHeightmap : register(t0);
 Texture2D DetailHeightmap : register(t1);
+
+Texture2DArray DiffuseTextures : register(t2);
+Texture2DArray BumpTextures : register(t3);

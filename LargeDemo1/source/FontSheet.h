@@ -39,7 +39,7 @@ public:
 	~FontSheet();
 
 	/// Gets the font sheet texture atlas.
-	std::shared_ptr<class Texture2D> GetFontTexture()			{ return _fontSheetTexture; }
+	std::shared_ptr<class Texture> GetFontTexture()			{ return _fontSheetTexture; }
 
 	int GetFontTextureHeight() const { return _texHeight; }
 	int GetFontTextureWidth() const { return _texWidth; }
@@ -81,7 +81,7 @@ private:
 	static const wchar_t _endChar = 127;
 	static const unsigned int _nu_chars = _endChar - _startChar;
 
-	std::shared_ptr<Texture2D> _fontSheetTexture;
+	std::shared_ptr<Texture> _fontSheetTexture;
 
 	unsigned int _texWidth;
 	unsigned int _texHeight;

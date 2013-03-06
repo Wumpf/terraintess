@@ -3,6 +3,12 @@
 class BufferObject;
 template<class T> class ConstantBuffer;
 
+
+// list of possible perf improvements
+// - heightmap mipmapping in vs & ds
+// - instancing for patches (single draw call for entire terrain at every time)
+
+
 class Terrain
 {
 public:
@@ -14,9 +20,16 @@ public:
 	/// \param heightmapYScale				height-scale of the coarse heightmap
 	/// \param detailHeightmapYScale		height-scale of the detail heightmap
 	Terrain(float totalTerrainSize, unsigned int heightmapResolution, float pixelPerTriangle, 
-				float DetailHeightmapTexcoordFactor = 50.0f, float heightmapYScale = 400.0f, float detailHeightmapYScale = 8.0f, 
+				float DetailHeightmapTexcoordFactor = 50.0f, float heightmapYScale = 400.0f, float detailHeightmapYScale = 4.0f, 
 				unsigned int patchCountPerBlockSqrt = 8);
 	~Terrain();
+
+	/// \brief Loads and configurates textures.
+	void SetupTextures(const std::string& grassDiffuseFilename, const std::string& grassBumpFilename,
+						const std::string& sandDiffuseFilename, const std::string& sandBumpFilename,
+						const std::string& rockDiffuseFilename, const std::string& rockBumpFilename,
+						const std::string& snowDiffuseFilename, const std::string& snowBumpFilename, float terrainTextureRepeat);
+
 
 	void Draw(const class Camera& camera, float totalSize);
 
@@ -38,8 +51,8 @@ private:
 
 	std::shared_ptr<class Effect> _effect;
 
-	std::shared_ptr<class Texture2D> _heightmapCoarseTexture;
-	std::shared_ptr<class Texture2D> _heightmapDetailTexture;
+	std::shared_ptr<class Texture> _heightmapCoarseTexture;
+	std::shared_ptr<class Texture> _heightmapDetailTexture;
 
 	struct TerrainConstants
 	{
@@ -52,6 +65,9 @@ private:
 		float DetailHeightmapTexcoordFactor;
 		float DetailHeightmapTexelSize;
 		float DetailHeightmapTexelSizeWorld_doubled;
+
+		float TextureRepeat;
+		float padding[3];
 	};
 	std::unique_ptr<ConstantBuffer<TerrainConstants>> _terrainConstantBuffer;
 
@@ -64,6 +80,11 @@ private:
 		float HeightmapTexcoordScale;		// size of the patch on the heightmap
 	};
 	std::unique_ptr<ConstantBuffer<PatchConstants>> _patchConstantBuffer;
+
+
+	// textures
+	std::shared_ptr<Texture> _diffuseTextures;
+	std::shared_ptr<Texture> _bumpmapTextures;
 
 
 	bool _wireframe;

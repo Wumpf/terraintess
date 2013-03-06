@@ -126,8 +126,8 @@ void FontSheet::BuildFontSheetTexture(Gdiplus::Bitmap& fontSheetBitmap)
 	// Lock the bitmap for direct memory access
 	Gdiplus::BitmapData bmData;
 	fontSheetBitmap.LockBits(&Gdiplus::Rect(0, 0, _texWidth, _texHeight), Gdiplus::ImageLockModeRead, PixelFormat32bppARGB, &bmData);  
-	_fontSheetTexture =  Texture2D::CreateFromData(bmData.Scan0, DXGI_FORMAT_B8G8R8A8_UNORM, _texWidth, _texHeight, 
-										Texture2D::CreationFlags::AUTOGEN_MIPMAPS | Texture2D::CreationFlags::SHADERRES_VIEW);
+	_fontSheetTexture =  Texture::CreateFromData(bmData.Scan0, DXGI_FORMAT_B8G8R8A8_UNORM, _texWidth, _texHeight, 
+										Texture::CreationFlags::AUTOGEN_MIPMAPS | Texture::CreationFlags::SHADERRES_VIEW);
 	fontSheetBitmap.UnlockBits(&bmData);  
 }
 

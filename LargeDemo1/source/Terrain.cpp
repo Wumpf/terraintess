@@ -96,10 +96,9 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	terrainConstants.DetailHeightScale = detailHeightmapYScale;
 	terrainConstants.DetailHeightmapTexcoordFactor = detailHeightmapTexcoordFactor;
 	terrainConstants.DetailHeightmapTexelSize = 1.0f / DETAIL_HEIGHTMAP_RESOLUTION;
-	terrainConstants.DetailHeightmapTexelSizeWorld_doubled = terrainConstants.CoarseHeightmapTexelSizeWorld_doubled * detailHeightmapTexcoordFactor;
+	terrainConstants.DetailHeightmapTexelSizeWorld_doubled = 2.0f * (_totalTerrainSize / (heightmapResolution * detailHeightmapTexcoordFactor));
 
 	_terrainConstantBuffer->UpdateGPUBuffer();
-
 
 
 	// create heightmap
@@ -108,9 +107,32 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	_heightmapDetailTexture = noiseGen.Generate(DETAIL_HEIGHTMAP_RESOLUTION, DETAIL_HEIGHTMAP_RESOLUTION, 0.5f, 6);
 }
 
-
 Terrain::~Terrain()
 {
+}
+
+void Terrain::SetupTextures(const std::string& grassDiffuseFilename, const std::string& grassBumpFilename,
+							const std::string& sandDiffuseFilename, const std::string& sandBumpFilename,
+							const std::string& rockDiffuseFilename, const std::string& rockBumpFilename,
+							const std::string& snowDiffuseFilename, const std::string& snowBumpFilename, float terrainTextureRepeat)
+{
+	std::vector<std::string> diffuseTextures;
+	diffuseTextures.push_back(grassDiffuseFilename);
+	diffuseTextures.push_back(sandDiffuseFilename);
+	diffuseTextures.push_back(rockDiffuseFilename);
+	diffuseTextures.push_back(snowDiffuseFilename);
+	_diffuseTextures = Texture::CreateArrayFromFiles(diffuseTextures);
+	std::vector<std::string> bumpmapTextures;
+	bumpmapTextures.push_back(grassBumpFilename);
+	bumpmapTextures.push_back(sandBumpFilename);
+	bumpmapTextures.push_back(rockBumpFilename);
+	bumpmapTextures.push_back(snowBumpFilename);
+	_bumpmapTextures = Texture::CreateArrayFromFiles(bumpmapTextures);
+
+
+	TerrainConstants& terrainConstants = _terrainConstantBuffer->GetContent();
+	terrainConstants.TextureRepeat = terrainTextureRepeat;
+	_terrainConstantBuffer->UpdateGPUBuffer();
 }
 
 void Terrain::OnBackBufferResize(unsigned int width, unsigned int height)
@@ -175,10 +197,12 @@ void Terrain::Draw(const Camera& camera, float totalSize)
 	immediateContext->DSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 	immediateContext->PSSetConstantBuffers(1, 1, _patchConstantBuffer->GetBufferPointer());
 
-	ID3D11ShaderResourceView* heightmapView[] = { _heightmapCoarseTexture->GetShaderResourceView().p, _heightmapDetailTexture->GetShaderResourceView().p };
+	ID3D11ShaderResourceView* heightmapView[] = { _heightmapCoarseTexture->GetShaderResourceView(), _heightmapDetailTexture->GetShaderResourceView() };
 	immediateContext->VSSetShaderResources(0, 2, heightmapView);
-	immediateContext->PSSetShaderResources(0, 2, heightmapView);
 	immediateContext->DSSetShaderResources(0, 2, heightmapView);
+	ID3D11ShaderResourceView* textureView[] = { _heightmapCoarseTexture->GetShaderResourceView(), _heightmapDetailTexture->GetShaderResourceView(),
+												_diffuseTextures->GetShaderResourceView(), _bumpmapTextures->GetShaderResourceView()  };
+	immediateContext->PSSetShaderResources(0, 4, textureView);
 
 	_effect->Activate();
 

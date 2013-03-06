@@ -13,10 +13,10 @@ PerlinNoiseGenerator::PerlinNoiseGenerator() :
 {
 }
 
-std::shared_ptr<Texture2D> PerlinNoiseGenerator::Generate(unsigned int width, unsigned int height, float persistance, unsigned int octaveCount)
+std::shared_ptr<Texture> PerlinNoiseGenerator::Generate(unsigned int width, unsigned int height, float persistance, unsigned int octaveCount)
 {
-	std::shared_ptr<Texture2D> whiteNoise(Texture2D::CreateFromData(Utils::RandomFloats(width* height, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, width, height, Texture2D::CreationFlags::SHADERRES_VIEW));
-	std::shared_ptr<Texture2D> noiseOutput(Texture2D::CreateEmpty(DXGI_FORMAT_R32_FLOAT, width, height, Texture2D::CreationFlags::SHADERRES_VIEW | Texture2D::CreationFlags::UNORDEREDACCESS_VIEW));
+	std::shared_ptr<Texture> whiteNoise(Texture::CreateFromData(Utils::RandomFloats(width* height, 0.0f, 1.0f).get(), DXGI_FORMAT_R32_FLOAT, width, height, Texture::CreationFlags::SHADERRES_VIEW));
+	std::shared_ptr<Texture> noiseOutput(Texture::CreateEmpty(DXGI_FORMAT_R32_FLOAT, width, height, Texture::CreationFlags::SHADERRES_VIEW | Texture::CreationFlags::UNORDEREDACCESS_VIEW));
 
 	auto view = noiseOutput->GetUnorderedAcessView().p;	// make easier!
 	DeviceManager::Get().GetContext()->CSSetUnorderedAccessViews(0, 1, &view, nullptr);

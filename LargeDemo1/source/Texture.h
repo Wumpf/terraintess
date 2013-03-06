@@ -2,12 +2,12 @@
 
 #include "Utils.h"
 
-class Texture2D
+class Texture
 {
 public:
 	enum class CreationFlags : uint32_t
 	{
-		FULL_MIPMAPCHAIN	 = 0xF0000000u,
+		FULL_MIPMAPCHAIN	 = 0xF0000000u, // if activated, but AUTOGEN_MIPMAPS is off, then the mipmaps are assumed to be in the data
 		AUTOGEN_MIPMAPS		 = 0x0F000000u,	// needs full mipmap chain, cpu access ("deferred fill") and srv and rendertarget
 		//CPU_WRITE			 = 0x00F00000u,
 		//CPU_READ			 = 0x0000000Fu,
@@ -16,16 +16,21 @@ public:
 		UNORDEREDACCESS_VIEW = 0x00000F00u
 	};
 
-	static std::shared_ptr<Texture2D> CreateEmpty(DXGI_FORMAT format, unsigned int width, unsigned int height,
+	static std::shared_ptr<Texture> CreateFromFile(const std::string& filename, CreationFlags creationFlags = CreationFlags::AUTOGEN_MIPMAPS);
+
+	static std::shared_ptr<Texture> CreateArrayFromFiles(const std::vector<std::string> filenames, CreationFlags creationFlags = CreationFlags::AUTOGEN_MIPMAPS);
+
+	static std::shared_ptr<Texture> CreateEmpty(DXGI_FORMAT format, unsigned int width, unsigned int height,
 													CreationFlags creationFlags = CreationFlags::SHADERRES_VIEW); 
 												  
-	static std::shared_ptr<Texture2D> CreateEmpty(DXGI_FORMAT format, unsigned int width, unsigned int height, DXGI_SAMPLE_DESC& samplingSettings,
+	static std::shared_ptr<Texture> CreateEmpty(DXGI_FORMAT format, unsigned int width, unsigned int height, DXGI_SAMPLE_DESC& samplingSettings,
 													CreationFlags creationFlags = CreationFlags::SHADERRES_VIEW);
 
-	static std::shared_ptr<Texture2D> CreateFromData(const void* data, DXGI_FORMAT format, unsigned int width, unsigned int height, 
+	static std::shared_ptr<Texture> CreateFromData(const void* data, DXGI_FORMAT format, unsigned int width, unsigned int height, 
 													CreationFlags creationFlags = CreationFlags::AUTOGEN_MIPMAPS);
 
-	static std::shared_ptr<Texture2D> CreateEx(const void* data, DXGI_FORMAT format, unsigned int width, unsigned int height, DXGI_SAMPLE_DESC& samplingSettings, CreationFlags creationFlags);
+	static std::shared_ptr<Texture> CreateEx(const void* data, DXGI_FORMAT format,  unsigned int width, unsigned int height, unsigned int arraySize,
+													DXGI_SAMPLE_DESC& samplingSettings, CreationFlags creationFlags);
 
 
 
@@ -42,9 +47,9 @@ public:
 	/// \brief returns nullptr if no render target view available
 	CComPtr<ID3D11RenderTargetView> GetRenderTargetView()		{ return _renderTargetView; }
 
-	~Texture2D() {}
+	~Texture() {}
 private:
-	Texture2D() {}
+	Texture() {}
 
 	CComPtr<ID3D11Texture2D> _texture;
 
@@ -54,4 +59,4 @@ private:
 	CComPtr<ID3D11RenderTargetView>		_renderTargetView;
 };
 
-CLASS_ENUM_FLAG(Texture2D::CreationFlags)
+CLASS_ENUM_FLAG(Texture::CreationFlags)

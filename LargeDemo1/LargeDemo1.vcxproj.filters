@@ -113,6 +113,9 @@
     <ClInclude Include="source\BlendState.h">
       <Filter>Code Files\rendering core\state objects</Filter>
     </ClInclude>
+    <ClInclude Include="source\stb_image.h">
+      <Filter>Code Files\helper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LargeDemo1.rc">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="source\BlendState.cpp">
       <Filter>Code Files\rendering core\state objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stb_image.c">
+      <Filter>Code Files\helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -181,6 +181,7 @@
     <ClInclude Include="source\SamplerState.h" />
     <ClInclude Include="source\Shader.h" />
     <ClInclude Include="source\SimpleMath.h" />
+    <ClInclude Include="source\stb_image.h" />
     <ClInclude Include="source\stdafx.h" />
     <ClInclude Include="source\Terrain.h" />
     <ClInclude Include="source\Texture.h" />
@@ -214,6 +215,10 @@
     <ClCompile Include="source\BlendState.cpp" />
     <ClCompile Include="source\SamplerState.cpp" />
     <ClCompile Include="source\Shader.cpp" />
+    <ClCompile Include="source\stb_image.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="source\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
