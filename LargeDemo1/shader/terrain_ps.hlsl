@@ -62,5 +62,17 @@ float4 main(DS_OUTPUT input) : SV_TARGET
 	float lighting = max(0, NDotL) * fakeShadow * 0.7 + 0.3f;
 	float3 outColor = diffuseColor * lighting;
 
+
+	// FOG - move later to viewspace!
+	// clever fog http://www.iquilezles.org/www/articles/fog/fog.htm
+	float3 cameraToPos = input.WorldPos - CameraPosition;
+	float cameraDist = length(cameraToPos);
+	cameraToPos /= cameraDist;
+	const float fogIntensity = 0.9f;
+	const float fogDensitiy = 0.014f;
+	float fogAmount = min(1.0f, fogIntensity * exp(-CameraPosition.y * fogDensitiy) * (1.0f - exp( -cameraDist*cameraToPos.y* fogDensitiy)) / cameraToPos.y);
+	outColor.rgb = lerp(outColor, float3(0.16, 0.27, 0.4), fogAmount);
+
+
 	return float4(outColor, 1.0f);
 }

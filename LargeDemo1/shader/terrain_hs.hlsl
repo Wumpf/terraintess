@@ -74,17 +74,17 @@ HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<HS_INPUT, NUM_CONTROL_PO
 		{
 			int second = (i+3) % 4;
 
-			if(ip[i].SkirtFactor > 0.0001f || ip[second].SkirtFactor > 0.0001f)
+			/*if(ip[i].SkirtFactor > 0.0001f || ip[second].SkirtFactor > 0.0001f)
 			{
 				Output.EdgeTessFactor[i] = 1.0f;
 				anySkirt = true;
 			}
-			else
+			else */
 				Output.EdgeTessFactor[i] = EstimateSphereSizeAroundEndge(ip[i].WorldPos, ip[second].WorldPos) * TrianglesPerClipSpaceUnit;
 		}
-		if(anySkirt)
+	/*	if(anySkirt)
 			Output.InsideTessFactor[1] = 1.0f;
-		else
+		else */
 			Output.InsideTessFactor[1] = (Output.EdgeTessFactor[0]+Output.EdgeTessFactor[1]+Output.EdgeTessFactor[2]+Output.EdgeTessFactor[3]) * 0.25f;
 		Output.InsideTessFactor[0] = Output.InsideTessFactor[1];
 	}

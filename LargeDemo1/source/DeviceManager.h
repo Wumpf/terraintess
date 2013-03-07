@@ -17,7 +17,7 @@ public:
 
 	void ResizeBackBuffer(unsigned int width, unsigned int height);
 
-	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.0f, 0.125f, 0.3f, 1.0f));
+	void ClearBackAndDepthBuffer(const SimpleMath::Color& color = SimpleMath::Color(0.16f, 0.27f, 0.4f, 1.0f));
 
 	// easy states
 	void SetRasterizerState(class RasterizerState& state);	// not const, since a state object may be created
