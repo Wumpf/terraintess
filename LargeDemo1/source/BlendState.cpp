@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "BlendState.h"
 
-BlendState BlendState::Additive(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
+BlendState BlendState::AlphaBlend(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
 								D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
 								D3D11_COLOR_WRITE_ENABLE_ALL, true);
-BlendState BlendState::AlphaBlend(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
+BlendState BlendState::Additive(D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
 								  D3D11_BLEND_ONE, D3D11_BLEND_ONE, D3D11_BLEND_OP_ADD,
 								  D3D11_COLOR_WRITE_ENABLE_ALL, true);
 BlendState BlendState::Opaque(D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA, D3D11_BLEND_OP_ADD,
@@ -24,5 +24,6 @@ BlendState::BlendState(D3D11_BLEND SrcBlend, D3D11_BLEND DestBlend, D3D11_BLEND_
 	_desc.RenderTarget[0].DestBlendAlpha = DestBlendAlpha;
 	_desc.RenderTarget[0].BlendOpAlpha = BlendOpAlpha;
 	_desc.RenderTarget[0].RenderTargetWriteMask = RenderTargetWriteMask;
+	_desc.RenderTarget[0].BlendEnable = blending;
 }
 

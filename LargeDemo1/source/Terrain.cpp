@@ -104,7 +104,7 @@ Terrain::Terrain(float totalTerrainSize, unsigned int heightmapResolution, float
 	// create heightmap
 	PerlinNoiseGenerator noiseGen;
 	_heightmapCoarseTexture = noiseGen.Generate(heightmapResolution, heightmapResolution, 0.4f, 8);
-	_heightmapDetailTexture = noiseGen.Generate(DETAIL_HEIGHTMAP_RESOLUTION, DETAIL_HEIGHTMAP_RESOLUTION, 0.5f, 6);
+	_heightmapDetailTexture = noiseGen.Generate(DETAIL_HEIGHTMAP_RESOLUTION, DETAIL_HEIGHTMAP_RESOLUTION, 0.5f, 5);
 }
 
 Terrain::~Terrain()

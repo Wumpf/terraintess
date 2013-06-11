@@ -43,14 +43,14 @@ float4 main(DS_OUTPUT input) : SV_TARGET
 	float3 diffuseColor = lerp(DiffuseTextures.Sample(SamplerTriLinearWrap, float3(textureTexcoord.xz, 0)).rgb*1.5f,
 								DiffuseTextures.Sample(SamplerTriLinearWrap, float3(textureTexcoord.xz, 2)).rgb, rock);
 
-	if(input.WorldPos.y > 225)
+	if(input.WorldPos.y > 100)
 	{
-		float snow = saturate((input.WorldPos.y - 225.0f) / 50.0f - rock);
+		float snow = saturate((input.WorldPos.y - 100.0f) / 50.0f - rock);
 		diffuseColor = lerp(diffuseColor, DiffuseTextures.Sample(SamplerAnisotropicWrap, float3(textureTexcoord.xz, 3)).rgb, snow);
 	}
-	else if(input.WorldPos.y < 120)
+	else if(input.WorldPos.y < -10)
 	{
-		float sand = saturate((120.0f - input.WorldPos.y) / 25.0f);
+		float sand = saturate((-10.0f - input.WorldPos.y) / 25.0f);
 		diffuseColor = lerp(diffuseColor, DiffuseTextures.Sample(SamplerAnisotropicWrap, float3(textureTexcoord.xz, 1)).rgb, sand);
 	}
 
@@ -65,14 +65,14 @@ float4 main(DS_OUTPUT input) : SV_TARGET
 
 	// FOG - move later to viewspace!
 	// clever fog http://www.iquilezles.org/www/articles/fog/fog.htm
-	float3 cameraToPos = input.WorldPos - CameraPosition;
+/*	float3 cameraToPos = input.WorldPos - CameraPosition;
 	float cameraDist = length(cameraToPos);
 	cameraToPos /= cameraDist;
-	const float fogIntensity = 0.9f;
-	const float fogDensitiy = 0.014f;
+	const float fogIntensity = 0.5f;
+	const float fogDensitiy = 0.001f;
 	float fogAmount = min(1.0f, fogIntensity * exp(-CameraPosition.y * fogDensitiy) * (1.0f - exp( -cameraDist*cameraToPos.y* fogDensitiy)) / cameraToPos.y);
 	outColor.rgb = lerp(outColor, float3(0.16, 0.27, 0.4), fogAmount);
-
+	*/
 
 	return float4(outColor, 1.0f);
 }

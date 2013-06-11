@@ -43,7 +43,7 @@ namespace Utils
 
 	double Random(double min, double max)
 	{
-		return (static_cast<double>(Random()) / UINT32_MAX) * max + min;
+		return (static_cast<double>(Random()) / UINT32_MAX) * (max-min) + min;
 	}
 
 	std::unique_ptr<float[]> RandomFloats(unsigned int numValues, float min, float max)
